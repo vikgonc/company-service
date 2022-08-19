@@ -19,7 +19,6 @@
         <module>common</module>
         <module>car-showroom</module>
         <module>factory</module>
-        <module>database</module>
     </modules>
 
     <properties>

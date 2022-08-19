@@ -2,6 +2,8 @@ server:
   port: 8082
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5435/root
-    username: root
+    url: jdbc:postgresql://localhost:5401/factory_db
+    username: admin
     password: root
+  liquibase:
+    enabled: off

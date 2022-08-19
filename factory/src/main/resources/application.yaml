@@ -7,3 +7,6 @@ spring:
     password: root
   liquibase:
     enabled: off
+  jpa:
+    hibernate:
+      ddl-auto: validate

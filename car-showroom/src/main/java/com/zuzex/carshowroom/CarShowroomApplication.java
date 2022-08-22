@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.zuzex.carshowroom","com.zuzex.common"})
+@ComponentScan(basePackages = {"com.zuzex.carshowroom", "com.zuzex.common"})
 public class CarShowroomApplication {
 
     public static void main(String[] args) {

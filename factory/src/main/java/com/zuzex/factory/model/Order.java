@@ -25,6 +25,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "car_id")
     private Long carId;
 }

@@ -1,5 +1,5 @@
 package com.zuzex.common.model;
 
 public enum Status {
-    ORDERED, ASSEMBLED, ON_SALE, SOLD
+    ORDER_CREATED, ASSEMBLED, ORDER_DONE, ON_SALE, SOLD
 }

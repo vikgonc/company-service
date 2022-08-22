@@ -3,6 +3,7 @@ version: "3.9"
 services:
   showroom-database:
     image: postgres:latest
+    restart: always
     environment:
       POSTGRES_DB: "showroom_db"
       POSTGRES_USER: "admin"
@@ -11,6 +12,7 @@ services:
       - "5400:5432"
   factory-database:
     image: postgres:latest
+    restart: always
     environment:
       POSTGRES_DB: "factory_db"
       POSTGRES_USER: "admin"

@@ -31,7 +31,7 @@ public class CarController {
     }
 
     @PostMapping
-    public Car createNewModel(@RequestBody CarDto carDto) {
+    public Car createNewCar(@RequestBody CarDto carDto) {
         return carService.createNewCar(carDto);
     }
 }

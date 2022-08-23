@@ -7,6 +7,7 @@ import com.zuzex.common.dto.CarDto;
 import com.zuzex.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 public class CarServiceImpl implements CarService {
 
     private final CarRepository carRepository;
+    private final KafkaTemplate<String, Long> kafkaTemplate;
 
     @Override
     public List<Car> findAll() {
@@ -31,7 +33,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Car createNewCar(CarDto carDto) {
-//        todo
+        kafkaTemplate.send("car-order", 231L);
         return null;
     }
 }

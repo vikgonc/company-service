@@ -6,5 +6,5 @@ import lombok.Data;
 public class CarDto {
 
     private Double price;
-    private Long model_id;
+    private Long modelId;
 }

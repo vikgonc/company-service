@@ -19,7 +19,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public List<Order> findAll(){
+    public List<Order> findAll() {
         return orderService.findAll();
     }
 

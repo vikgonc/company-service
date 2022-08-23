@@ -7,4 +7,5 @@ public class CarDto {
 
     private Double price;
     private Long modelId;
+    private String orderDescription;
 }

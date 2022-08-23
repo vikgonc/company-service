@@ -26,7 +26,7 @@ public class ModelController {
     }
 
     @GetMapping("/{id}")
-    public Model findModelById(@PathVariable("id") Long id) {
+    public Model findModelById(@PathVariable Long id) {
         return modelService.findById(id);
     }
 

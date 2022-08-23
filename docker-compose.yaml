@@ -1,25 +1,15 @@
 version: "3.9"
 
 services:
-  showroom-database:
+  db:
     image: postgres:latest
     restart: always
     environment:
-      POSTGRES_DB: "showroom_db"
+      POSTGRES_DB: "db"
       POSTGRES_USER: "admin"
       POSTGRES_PASSWORD: "root"
     ports:
       - "5400:5432"
-
-  factory-database:
-    image: postgres:latest
-    restart: always
-    environment:
-      POSTGRES_DB: "factory_db"
-      POSTGRES_USER: "admin"
-      POSTGRES_PASSWORD: "root"
-    ports:
-      - "5401:5432"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest

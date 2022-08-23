@@ -23,12 +23,12 @@ public class OrderController {
         return orderService.findAll();
     }
 
-    @PostMapping("/{orderId}")
+    @PostMapping("/assemble/{orderId}")
     public Order assembleCar(@PathVariable Long orderId) {
         return orderService.assembleCar(orderId);
     }
 
-    @PostMapping("/{orderId}")
+    @PostMapping("/deliver/{orderId}")
     public Order deliverCar(@PathVariable Long orderId) {
         return orderService.deliverCar(orderId);
     }

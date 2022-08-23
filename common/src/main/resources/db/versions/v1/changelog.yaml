@@ -4,4 +4,6 @@ databaseChangeLog:
   - include:
       file: src/main/resources/db/versions/v1/create_table_cars.sql
   - include:
+      file: src/main/resources/db/versions/v1/create_table_orders.sql
+  - include:
       file: src/main/resources/db/versions/v1/seeding/insert_new_models.sql

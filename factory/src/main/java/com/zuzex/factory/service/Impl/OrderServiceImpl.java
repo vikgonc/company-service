@@ -67,8 +67,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public Order deliverOrder(Long orderId) {
-//        todo
-        return null;
+        Order orderToDeliver = orderRepository.findByIdAndStatus(orderId, Status.CAR_ASSEMBLED)
+                .orElseThrow(() -> new NotFoundException("Such order not found"));
+        orderToDeliver.setStatus(Status.ORDER_COMPLETED);
+        Order deliveredOrder = orderRepository.save(orderToDeliver);
+
+        CarStatusDto carStatusDto = new CarStatusDto(deliveredOrder.getCarId(), Status.ON_SALE);
+        createNewStatusMessageInShowroomService(carStatusDto);
+
+        return deliveredOrder;
     }
 
     private void createNewStatusMessageInShowroomService(CarStatusDto carStatusDto) {

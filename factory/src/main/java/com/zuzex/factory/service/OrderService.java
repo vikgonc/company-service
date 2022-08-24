@@ -9,9 +9,11 @@ public interface OrderService {
 
     List<Order> findAll();
 
+    Order findById(Long id);
+
     void createOrder(OrderDto orderDto);
 
-    Order assembleOrder(Long orderId);
+    Order assemble(Long orderId);
 
-    Order deliverOrder(Long orderId);
+    Order deliver(Long orderId);
 }

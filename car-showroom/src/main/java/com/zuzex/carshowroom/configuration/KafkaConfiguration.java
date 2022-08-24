@@ -2,10 +2,12 @@ package com.zuzex.carshowroom.configuration;
 
 import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.dto.OrderDto;
+import lombok.Setter;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -20,8 +22,14 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import java.util.HashMap;
 import java.util.Map;
 
+@Setter
 @Configuration
+@ConfigurationProperties(prefix = "kafka")
 public class KafkaConfiguration {
+
+    private String host;
+    private String consumerGroupId;
+    private String autoOffsetReset;
 
     @Bean
     public KafkaTemplate<String, OrderDto> kafkaTemplate(ProducerFactory<String, OrderDto> producerFactory) {
@@ -41,9 +49,9 @@ public class KafkaConfiguration {
     @Bean
     public ConsumerFactory<String, CarStatusDto> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "car-status-group");
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, host);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
         JsonDeserializer<CarStatusDto> objectJsonDeserializer = new JsonDeserializer<>(CarStatusDto.class);
 
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(),
@@ -53,7 +61,7 @@ public class KafkaConfiguration {
     @Bean
     public ProducerFactory<String, OrderDto> producerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, host);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 

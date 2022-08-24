@@ -30,7 +30,7 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Model createNewModel(ModelDto modelDto) {
+    public Model createNew(ModelDto modelDto) {
         Model modelToSave = Model.builder()
                 .brand(modelDto.getBrand())
                 .modelName(modelDto.getModelName())

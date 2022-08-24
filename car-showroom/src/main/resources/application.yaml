@@ -8,3 +8,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+kafka:
+  host: localhost:9092
+  consumer-group-id: car-status-group
+  auto-offset-reset: earliest
+  order-topic: orders
+  car-status-topic: car-status

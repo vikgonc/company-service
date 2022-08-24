@@ -19,17 +19,22 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public List<Order> findAll() {
+    public List<Order> findAllOrders() {
         return orderService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Order findOrderById(@PathVariable Long id) {
+        return orderService.findById(id);
     }
 
     @PostMapping("/assemble/{orderId}")
     public Order assembleOrder(@PathVariable Long orderId) {
-        return orderService.assembleOrder(orderId);
+        return orderService.assemble(orderId);
     }
 
     @PostMapping("/deliver/{orderId}")
     public Order deliverOrder(@PathVariable Long orderId) {
-        return orderService.deliverOrder(orderId);
+        return orderService.deliver(orderId);
     }
 }

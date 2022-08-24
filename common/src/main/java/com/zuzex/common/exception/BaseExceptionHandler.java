@@ -16,4 +16,11 @@ public class BaseExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorMessageDto errorMessage = new ErrorMessageDto(ex.getMessage());
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(KafkaTemplateException.class)
+    public ResponseEntity<ErrorMessageDto> handleKafkaTemplateException(KafkaTemplateException ex) {
+        log.error(ex.getMessage());
+        ErrorMessageDto errorMessage = new ErrorMessageDto(ex.getMessage());
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
 }

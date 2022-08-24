@@ -7,12 +7,13 @@ import com.zuzex.carshowroom.service.ModelService;
 import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.dto.OrderCarDto;
 import com.zuzex.common.dto.OrderDto;
+import com.zuzex.common.exception.KafkaTemplateException;
 import com.zuzex.common.exception.NotFoundException;
 import com.zuzex.common.model.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
-import org.springframework.kafka.KafkaException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -28,9 +29,14 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
 
+    private static final String CAR_NOT_FOUND = "Such car is not found";
+
     private final CarRepository carRepository;
     private final ModelService modelService;
     private final KafkaTemplate<String, OrderDto> kafkaTemplate;
+
+    @Value("${kafka.order-topic}")
+    private String orderTopic;
 
     @Override
     public List<Car> findAll() {
@@ -46,7 +52,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public Car findById(Long id) {
         return carRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Such car not found"));
+                .orElseThrow(() -> new NotFoundException(CAR_NOT_FOUND));
     }
 
     @Override
@@ -68,19 +74,19 @@ public class CarServiceImpl implements CarService {
     @Override
     public Car buy(Long id) {
         Car carForSale = carRepository.findByIdAndStatus(id, Status.ON_SALE)
-                .orElseThrow(() -> new NotFoundException("Such car not found"));
+                .orElseThrow(() -> new NotFoundException(CAR_NOT_FOUND));
         carForSale.setStatus(Status.SOLD);
 
         return carRepository.save(carForSale);
     }
 
     @Override
-    @KafkaListener(topics = "car-status")
+    @KafkaListener(topics = "${kafka.car-status-topic}")
     public void setStatus(CarStatusDto carStatusDto) {
         log.info("Message \"{}\" received", carStatusDto);
 
         Car carForEditStatus = carRepository.findById(carStatusDto.getCarId())
-                .orElseThrow(() -> new NotFoundException("Such car not found"));
+                .orElseThrow(() -> new NotFoundException(CAR_NOT_FOUND));
         Status status = carStatusDto.getStatus();
         carForEditStatus.setStatus(status);
         Car savedCar = carRepository.save(carForEditStatus);
@@ -89,13 +95,13 @@ public class CarServiceImpl implements CarService {
     }
 
     private void createNewOrderInFactoryService(OrderDto orderDto) {
-        ListenableFuture<SendResult<String, OrderDto>> sendResult = kafkaTemplate.send("orders", orderDto);
+        ListenableFuture<SendResult<String, OrderDto>> sendResult = kafkaTemplate.send(orderTopic, orderDto);
         try {
             sendResult.get(3, TimeUnit.SECONDS);
             log.info("Message \"{}\" sent successful", orderDto);
         } catch (Exception e) {
             log.info("Message \"{}\" failed for reason: {}", orderDto, e.getMessage());
-            throw new KafkaException(e.getMessage());
+            throw new KafkaTemplateException(e.getMessage());
         }
     }
 }

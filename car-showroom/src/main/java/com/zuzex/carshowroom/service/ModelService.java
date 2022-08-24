@@ -11,5 +11,5 @@ public interface ModelService {
 
     Model findById(Long id);
 
-    Model createNewModel(ModelDto modelDto);
+    Model createNew(ModelDto modelDto);
 }

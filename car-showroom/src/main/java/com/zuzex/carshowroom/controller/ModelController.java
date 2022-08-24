@@ -32,6 +32,6 @@ public class ModelController {
 
     @PostMapping("/create")
     public Model createNewModel(@RequestBody ModelDto modelDto) {
-        return modelService.createNewModel(modelDto);
+        return modelService.createNew(modelDto);
     }
 }

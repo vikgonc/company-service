@@ -16,7 +16,11 @@ values ('ВАЗ',
         'Классика, бюджетное решение');
 
 insert into models(brand,
-                   model_name)
+                   model_name,
+                   description)
 values ('Porsche',
-        'Cayman');
+        'Cayman',
+        'Premium auto');
+--rollback delete from orders;
+--rollback delete from cars;
 --rollback delete from models;

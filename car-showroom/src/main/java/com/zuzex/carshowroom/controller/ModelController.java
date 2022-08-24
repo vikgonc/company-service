@@ -30,7 +30,7 @@ public class ModelController {
         return modelService.findById(id);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public Model createNewModel(@RequestBody ModelDto modelDto) {
         return modelService.createNewModel(modelDto);
     }

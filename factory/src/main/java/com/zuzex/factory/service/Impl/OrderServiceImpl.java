@@ -7,6 +7,7 @@ import com.zuzex.factory.repository.OrderRepository;
 import com.zuzex.factory.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +22,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> findAll() {
-        return null;
+        Iterable<Order> allOrders = orderRepository.findAll();
+        return IterableUtils.toList(allOrders);
     }
 
-    //  todo починить миграции!
     @Override
     @KafkaListener(topics = "car-order")
     public void createOrder(OrderDto orderDto) {

@@ -4,7 +4,7 @@ import com.zuzex.carshowroom.model.Car;
 import com.zuzex.carshowroom.repository.CarRepository;
 import com.zuzex.carshowroom.service.CarService;
 import com.zuzex.carshowroom.service.ModelService;
-import com.zuzex.common.dto.CarDto;
+import com.zuzex.common.dto.OrderCarDto;
 import com.zuzex.common.dto.OrderDto;
 import com.zuzex.common.exception.NotFoundException;
 import com.zuzex.common.model.Status;
@@ -37,6 +37,11 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    public List<Car> findAllOnSale() {
+        return carRepository.findAllByStatusEquals(Status.ON_SALE);
+    }
+
+    @Override
     public Car findById(Long id) {
         return carRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Such car not found"));
@@ -44,18 +49,27 @@ public class CarServiceImpl implements CarService {
 
     @Override
     @Transactional
-    public Car createNewCar(CarDto carDto) {
+    public Car createNew(OrderCarDto orderCarDto) {
         Car carForSave = Car.builder()
-                .price(carDto.getPrice())
+                .price(orderCarDto.getPrice())
                 .status(Status.ORDER_CREATED)
-                .model(modelService.findById(carDto.getModelId()))
+                .model(modelService.findById(orderCarDto.getModelId()))
                 .build();
         Car carAfterSave = carRepository.save(carForSave);
 
-        OrderDto orderDto = new OrderDto(carAfterSave.getId(), carDto.getOrderDescription());
+        OrderDto orderDto = new OrderDto(carAfterSave.getId(), orderCarDto.getOrderDescription());
         createNewOrderInFactoryService(orderDto);
 
         return carAfterSave;
+    }
+
+    @Override
+    public Car buy(Long id) {
+        Car carForSale = carRepository.findByIdAndStatus(id, Status.ON_SALE)
+                .orElseThrow(() -> new NotFoundException("Such car not found"));
+        carForSale.setStatus(Status.SOLD);
+
+        return carRepository.save(carForSale);
     }
 
     private void createNewOrderInFactoryService(OrderDto orderDto) {

@@ -1,7 +1,7 @@
 package com.zuzex.carshowroom.service;
 
 import com.zuzex.carshowroom.model.Car;
-import com.zuzex.common.dto.CarDto;
+import com.zuzex.common.dto.OrderCarDto;
 
 import java.util.List;
 
@@ -9,7 +9,11 @@ public interface CarService {
 
     List<Car> findAll();
 
+    List<Car> findAllOnSale();
+
     Car findById(Long id);
 
-    Car createNewCar(CarDto carDto);
+    Car createNew(OrderCarDto orderCarDto);
+
+    Car buy(Long id);
 }

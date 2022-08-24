@@ -5,5 +5,6 @@ public enum Status {
     CAR_ASSEMBLED,
     ORDER_COMPLETED,
     ON_SALE,
-    SOLD
+    SOLD,
+    ORDER_CANCELED
 }

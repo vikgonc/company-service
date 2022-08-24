@@ -2,7 +2,7 @@ package com.zuzex.carshowroom.controller;
 
 import com.zuzex.carshowroom.model.Car;
 import com.zuzex.carshowroom.service.CarService;
-import com.zuzex.common.dto.CarDto;
+import com.zuzex.common.dto.OrderCarDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,17 +21,27 @@ public class CarController {
     private final CarService carService;
 
     @GetMapping
-    public List<Car> findAllModels() {
+    public List<Car> findAllCars() {
         return carService.findAll();
     }
 
+    @GetMapping("/sale")
+    public List<Car> findAllCarsOnSale() {
+        return carService.findAllOnSale();
+    }
+
     @GetMapping("/{id}")
-    public Car findModelById(@PathVariable Long id) {
+    public Car findCarById(@PathVariable Long id) {
         return carService.findById(id);
     }
 
-    @PostMapping
-    public Car createNewCar(@RequestBody CarDto carDto) {
-        return carService.createNewCar(carDto);
+    @PostMapping("/order")
+    public Car orderNewCar(@RequestBody OrderCarDto orderCarDto) {
+        return carService.createNew(orderCarDto);
+    }
+
+    @PostMapping("/buy/{id}")
+    public Car buyCar(@PathVariable Long id) {
+        return carService.buy(id);
     }
 }

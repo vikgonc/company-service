@@ -11,7 +11,7 @@ public interface OrderService {
 
     void createOrder(OrderDto orderDto);
 
-    Order assembleCar(Long orderId);
+    Order assembleOrder(Long orderId);
 
-    Order deliverCar(Long orderId);
+    Order deliverOrder(Long orderId);
 }

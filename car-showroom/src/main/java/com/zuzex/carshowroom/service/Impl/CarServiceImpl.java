@@ -4,6 +4,7 @@ import com.zuzex.carshowroom.model.Car;
 import com.zuzex.carshowroom.repository.CarRepository;
 import com.zuzex.carshowroom.service.CarService;
 import com.zuzex.carshowroom.service.ModelService;
+import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.dto.OrderCarDto;
 import com.zuzex.common.dto.OrderDto;
 import com.zuzex.common.exception.NotFoundException;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.kafka.KafkaException;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
@@ -72,8 +74,22 @@ public class CarServiceImpl implements CarService {
         return carRepository.save(carForSale);
     }
 
+    @Override
+    @KafkaListener(topics = "car-status")
+    public void setStatus(CarStatusDto carStatusDto) {
+        log.info("Message \"{}\" received", carStatusDto);
+
+        Car carForEditStatus = carRepository.findById(carStatusDto.getCarId())
+                .orElseThrow(() -> new NotFoundException("Such car not found"));
+        Status status = carStatusDto.getStatus();
+        carForEditStatus.setStatus(status);
+        Car savedCar = carRepository.save(carForEditStatus);
+
+        log.info("Car \"{}\" saved", savedCar);
+    }
+
     private void createNewOrderInFactoryService(OrderDto orderDto) {
-        ListenableFuture<SendResult<String, OrderDto>> sendResult = kafkaTemplate.send("car-order", orderDto);
+        ListenableFuture<SendResult<String, OrderDto>> sendResult = kafkaTemplate.send("orders", orderDto);
         try {
             sendResult.get(3, TimeUnit.SECONDS);
             log.info("Message \"{}\" sent successful", orderDto);

@@ -24,12 +24,12 @@ public class OrderController {
     }
 
     @PostMapping("/assemble/{orderId}")
-    public Order assembleCar(@PathVariable Long orderId) {
-        return orderService.assembleCar(orderId);
+    public Order assembleOrder(@PathVariable Long orderId) {
+        return orderService.assembleOrder(orderId);
     }
 
     @PostMapping("/deliver/{orderId}")
-    public Order deliverCar(@PathVariable Long orderId) {
-        return orderService.deliverCar(orderId);
+    public Order deliverOrder(@PathVariable Long orderId) {
+        return orderService.deliverOrder(orderId);
     }
 }

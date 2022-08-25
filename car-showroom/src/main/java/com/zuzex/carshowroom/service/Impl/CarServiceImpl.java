@@ -10,13 +10,10 @@ import com.zuzex.common.exception.NotFoundException;
 import com.zuzex.common.model.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaSendCallback;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -33,6 +30,7 @@ public class CarServiceImpl implements CarService {
     private final CarRepository carRepository;
     private final ModelService modelService;
     private final KafkaTemplate<String, OrderDto> kafkaTemplate;
+    private final KafkaSendCallback<String, OrderDto> kafkaSendCallback;
 
     @Value("${kafka.order-topic}")
     private String orderTopic;
@@ -90,22 +88,6 @@ public class CarServiceImpl implements CarService {
 
     private void sendNewOrderInFactoryService(OrderDto orderDto) {
         ListenableFuture<SendResult<String, OrderDto>> sendResult = kafkaTemplate.send(orderTopic, orderDto);
-        sendResult.addCallback(new KafkaSendCallback<>() {
-
-            @Override
-            public void onSuccess(SendResult<String, OrderDto> result) {
-                log.info("Message \"{}\" sent successful", orderDto);
-            }
-
-            @Override
-            public void onFailure(@NonNull KafkaProducerException ex) {
-                log.info("Message \"{}\" failed for reason: {}", orderDto, ex.getMessage());
-                ProducerRecord<String, OrderDto> failedProducerRecord = ex.getFailedProducerRecord();
-                Long invalidCarId = failedProducerRecord.value().getCarId();
-
-                Car fixedCarRecord = setCarStatusById(invalidCarId, Status.PROCESSING_FAILED);
-                log.info("Consistency returned: {}", fixedCarRecord);
-            }
-        });
+        sendResult.addCallback(kafkaSendCallback);
     }
 }

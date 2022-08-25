@@ -8,13 +8,10 @@ import com.zuzex.factory.repository.OrderRepository;
 import com.zuzex.factory.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaSendCallback;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -30,6 +27,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final KafkaTemplate<String, CarStatusDto> kafkaTemplate;
+    private final KafkaSendCallback<String, CarStatusDto> kafkaSendCallback;
 
     @Value("${kafka.car-status-topic}")
     private String carStatusTopic;
@@ -59,16 +57,32 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public Order assembleOrderById(Long id) {
-        return changeOrderStatusById(id, Status.ORDER_CREATED, Status.CAR_ASSEMBLED, Status.CAR_ASSEMBLED);
+        return changeOrderStatusByIdAndSend(id, Status.ORDER_CREATED, Status.CAR_ASSEMBLED, Status.CAR_ASSEMBLED);
     }
 
     @Override
     @Transactional
     public Order deliverOrderById(Long id) {
-        return changeOrderStatusById(id, Status.CAR_ASSEMBLED, Status.ORDER_COMPLETED, Status.ON_SALE);
+        return changeOrderStatusByIdAndSend(id, Status.CAR_ASSEMBLED, Status.ORDER_COMPLETED, Status.ON_SALE);
     }
 
-    private Order changeOrderStatusById(Long id, Status oldOrderStatus, Status newOrderStatus, Status newCarStatus) {
+    @Override
+    public Order revertOrderStatusById(Long id) {
+        return orderRepository.findById(id)
+                .map(order -> {
+                    Status newStatus;
+                    if (order.getStatus().equals(Status.CAR_ASSEMBLED)) {
+                        newStatus = Status.ORDER_CREATED;
+                    } else {
+                        newStatus = Status.CAR_ASSEMBLED;
+                    }
+                    order.setStatus(newStatus);
+                    return orderRepository.save(order);
+                })
+                .orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND));
+    }
+
+    private Order changeOrderStatusByIdAndSend(Long id, Status oldOrderStatus, Status newOrderStatus, Status newCarStatus) {
         Order orderAfterSave = orderRepository.findByIdAndStatus(id, oldOrderStatus)
                 .map(order -> {
                     order.setStatus(newOrderStatus);
@@ -83,33 +97,6 @@ public class OrderServiceImpl implements OrderService {
 
     private void sendNewStatusMessageInShowroomService(CarStatusDto carStatusDto) {
         ListenableFuture<SendResult<String, CarStatusDto>> sendResult = kafkaTemplate.send(carStatusTopic, carStatusDto);
-        sendResult.addCallback(new KafkaSendCallback<>() {
-
-            @Override
-            public void onSuccess(SendResult<String, CarStatusDto> result) {
-                log.info("Message \"{}\" sent successful", carStatusDto);
-            }
-
-            @Override
-            public void onFailure(@NonNull KafkaProducerException ex) {
-                log.info("Message \"{}\" failed for reason: {}", carStatusDto, ex.getMessage());
-                ProducerRecord<String, CarStatusDto> failedProducerRecord = ex.getFailedProducerRecord();
-                Long invalidOrderId = failedProducerRecord.value().getCarId();
-
-                Order fixedOrderRecord = orderRepository.findById(invalidOrderId)
-                        .map(order -> {
-                            Status newStatus;
-                            if (order.getStatus().equals(Status.CAR_ASSEMBLED)) {
-                                newStatus = Status.ORDER_CREATED;
-                            } else {
-                                newStatus = Status.CAR_ASSEMBLED;
-                            }
-                            order.setStatus(newStatus);
-                            return orderRepository.save(order);
-                        })
-                        .orElse(null);
-                log.info("Consistency returned: {}", fixedOrderRecord);
-            }
-        });
+        sendResult.addCallback(kafkaSendCallback);
     }
 }

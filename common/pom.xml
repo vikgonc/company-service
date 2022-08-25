@@ -17,7 +17,7 @@
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
-                <version>4.9.1</version>
+                <version>${liquibase.version}</version>
                 <configuration>
                     <changeLogFile>src/main/resources/db/changelog-master.yaml</changeLogFile>
                     <url>jdbc:postgresql://localhost:5400/db</url>
@@ -28,12 +28,7 @@
                     <dependency>
                         <groupId>org.liquibase</groupId>
                         <artifactId>liquibase-core</artifactId>
-                        <version>4.9.1</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>42.4.0</version>
+                        <version>${liquibase.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

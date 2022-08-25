@@ -28,13 +28,13 @@ public class OrderController {
         return orderService.findOrderById(id);
     }
 
-    @PostMapping("/assemble/{orderId}")
-    public Order assembleOrder(@PathVariable Long orderId) {
-        return orderService.assembleOrderById(orderId);
+    @PostMapping("/assemble/{id}")
+    public Order assembleOrderById(@PathVariable Long id) {
+        return orderService.assembleOrderById(id);
     }
 
-    @PostMapping("/deliver/{orderId}")
-    public Order deliverOrder(@PathVariable Long orderId) {
-        return orderService.deliverOrderById(orderId);
+    @PostMapping("/deliver/{id}")
+    public Order deliverOrderById(@PathVariable Long id) {
+        return orderService.deliverOrderById(id);
     }
 }

@@ -15,4 +15,6 @@ public interface OrderService {
     Order assembleOrderById(Long id);
 
     Order deliverOrderById(Long id);
+
+    Order revertOrderStatusById(Long id);
 }

@@ -22,16 +22,16 @@ public class ModelController {
 
     @GetMapping
     public List<Model> findAllModels() {
-        return modelService.findAll();
+        return modelService.findAllModels();
     }
 
     @GetMapping("/{id}")
     public Model findModelById(@PathVariable Long id) {
-        return modelService.findById(id);
+        return modelService.findModelById(id);
     }
 
     @PostMapping("/create")
     public Model createNewModel(@RequestBody ModelDto modelDto) {
-        return modelService.createNew(modelDto);
+        return modelService.createNewModel(modelDto);
     }
 }

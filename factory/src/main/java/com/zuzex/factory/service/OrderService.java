@@ -1,19 +1,18 @@
 package com.zuzex.factory.service;
 
-import com.zuzex.common.dto.OrderDto;
 import com.zuzex.factory.model.Order;
 
 import java.util.List;
 
 public interface OrderService {
 
-    List<Order> findAll();
+    List<Order> findAllOrders();
 
-    Order findById(Long id);
+    Order findOrderById(Long id);
 
-    void createOrder(OrderDto orderDto);
+    Order createNewOrderByCarIdAndDescription(Long carId, String description);
 
-    Order assemble(Long orderId);
+    Order assembleOrderById(Long id);
 
-    Order deliver(Long orderId);
+    Order deliverOrderById(Long id);
 }

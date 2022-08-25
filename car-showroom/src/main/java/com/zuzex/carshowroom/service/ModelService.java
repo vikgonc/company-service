@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface ModelService {
 
-    List<Model> findAll();
+    List<Model> findAllModels();
 
-    Model findById(Long id);
+    Model findModelById(Long id);
 
-    Model createNew(ModelDto modelDto);
+    Model createNewModel(ModelDto modelDto);
 }

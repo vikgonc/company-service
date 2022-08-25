@@ -22,26 +22,26 @@ public class CarController {
 
     @GetMapping
     public List<Car> findAllCars() {
-        return carService.findAll();
+        return carService.findAllCars();
     }
 
     @GetMapping("/sale")
     public List<Car> findAllCarsOnSale() {
-        return carService.findAllOnSale();
+        return carService.findAllCarsOnSale();
     }
 
     @GetMapping("/{id}")
     public Car findCarById(@PathVariable Long id) {
-        return carService.findById(id);
+        return carService.findCarById(id);
     }
 
     @PostMapping("/order")
     public Car orderNewCar(@RequestBody OrderCarDto orderCarDto) {
-        return carService.createNew(orderCarDto);
+        return carService.orderNewCar(orderCarDto);
     }
 
     @PostMapping("/buy/{id}")
     public Car buyCar(@PathVariable Long id) {
-        return carService.buy(id);
+        return carService.buyCarById(id);
     }
 }

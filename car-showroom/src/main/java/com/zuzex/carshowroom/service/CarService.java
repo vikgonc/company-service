@@ -1,22 +1,22 @@
 package com.zuzex.carshowroom.service;
 
 import com.zuzex.carshowroom.model.Car;
-import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.dto.OrderCarDto;
+import com.zuzex.common.model.Status;
 
 import java.util.List;
 
 public interface CarService {
 
-    List<Car> findAll();
+    List<Car> findAllCars();
 
-    List<Car> findAllOnSale();
+    List<Car> findAllCarsOnSale();
 
-    Car findById(Long id);
+    Car findCarById(Long id);
 
-    Car createNew(OrderCarDto orderCarDto);
+    Car orderNewCar(OrderCarDto orderCarDto);
 
-    Car buy(Long id);
+    Car setCarStatusById(Long id, Status status);
 
-    void setStatus(CarStatusDto carStatusDto);
+    Car buyCarById(Long id);
 }

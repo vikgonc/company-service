@@ -1,4 +1,4 @@
-factory/HELP.md
+HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+/common/.mvn/wrapper/maven-wrapper.jar
+/common/.mvn/wrapper/maven-wrapper.properties
+/database/.mvn/wrapper/maven-wrapper.jar
+/database/.mvn/wrapper/maven-wrapper.properties

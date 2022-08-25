@@ -1,2 +1,16 @@
 server:
   port: 8082
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5400/db
+    username: admin
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: validate
+kafka:
+  host: localhost:9092
+  consumer-group-id: order-group
+  auto-offset-reset: earliest
+  order-topic: orders
+  car-status-topic: car-status

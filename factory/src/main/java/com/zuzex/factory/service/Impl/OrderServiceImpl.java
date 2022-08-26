@@ -1,5 +1,6 @@
 package com.zuzex.factory.service.Impl;
 
+import com.zuzex.common.aop.TimeTrackable;
 import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.exception.NotFoundException;
 import com.zuzex.common.model.Action;
@@ -35,6 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private String carStatusTopic;
 
     @Override
+    @TimeTrackable
     public List<Order> findAllOrders() {
         return orderRepository.findAll();
     }
@@ -57,6 +59,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @TimeTrackable
     @Transactional
     public Order changeOrderStatusById(Long id, String action) {
         Action validatedAction = stringToAction(action);

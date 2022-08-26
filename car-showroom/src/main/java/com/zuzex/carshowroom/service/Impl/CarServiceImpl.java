@@ -4,6 +4,7 @@ import com.zuzex.carshowroom.model.Car;
 import com.zuzex.carshowroom.repository.CarRepository;
 import com.zuzex.carshowroom.service.CarService;
 import com.zuzex.carshowroom.service.ModelService;
+import com.zuzex.common.aop.TimeTrackable;
 import com.zuzex.common.dto.OrderCarDto;
 import com.zuzex.common.dto.OrderDto;
 import com.zuzex.common.exception.NotFoundException;
@@ -36,6 +37,7 @@ public class CarServiceImpl implements CarService {
     private String orderTopic;
 
     @Override
+    @TimeTrackable
     public List<Car> findAllCars() {
         return carRepository.findAll();
     }
@@ -52,6 +54,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @TimeTrackable
     @Transactional
     public Car orderNewCar(OrderCarDto orderCarDto) {
         Car carAfterSave = carRepository.save(

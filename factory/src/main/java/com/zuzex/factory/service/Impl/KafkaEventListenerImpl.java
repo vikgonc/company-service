@@ -1,5 +1,6 @@
 package com.zuzex.factory.service.Impl;
 
+import com.zuzex.common.aop.TimeTrackable;
 import com.zuzex.common.dto.OrderDto;
 import com.zuzex.factory.model.Order;
 import com.zuzex.factory.service.EventListener;
@@ -20,6 +21,7 @@ public class KafkaEventListenerImpl implements EventListener {
 
     @Override
     @KafkaHandler
+    @TimeTrackable
     public void handleNewOrder(OrderDto orderDto) {
         log.info("Message \"{}\" received", orderDto);
 

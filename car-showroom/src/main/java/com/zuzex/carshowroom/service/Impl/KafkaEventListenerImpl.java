@@ -5,6 +5,7 @@ import com.zuzex.carshowroom.model.Car;
 import com.zuzex.carshowroom.service.CarService;
 import com.zuzex.carshowroom.service.EventListener;
 import com.zuzex.carshowroom.service.ShowroomSocket;
+import com.zuzex.common.aop.TimeTrackable;
 import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.util.ThrowingConsumer;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class KafkaEventListenerImpl implements EventListener {
 
     @Override
     @KafkaHandler
+    @TimeTrackable
     public void handleCarStatus(CarStatusDto carStatusDto) throws IOException {
         log.info("Message \"{}\" received", carStatusDto);
 

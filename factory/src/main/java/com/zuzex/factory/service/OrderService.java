@@ -12,9 +12,7 @@ public interface OrderService {
 
     Order createNewOrderByCarIdAndDescription(Long carId, String description);
 
-    Order assembleOrderById(Long id);
-
-    Order deliverOrderById(Long id);
+    Order changeOrderStatusById(Long id, String action);
 
     Order revertOrderStatusById(Long id);
 }

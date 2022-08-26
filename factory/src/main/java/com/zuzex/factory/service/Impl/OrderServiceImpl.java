@@ -2,6 +2,7 @@ package com.zuzex.factory.service.Impl;
 
 import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.exception.NotFoundException;
+import com.zuzex.common.model.Action;
 import com.zuzex.common.model.Status;
 import com.zuzex.factory.model.Order;
 import com.zuzex.factory.repository.OrderRepository;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -56,14 +58,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public Order assembleOrderById(Long id) {
-        return changeOrderStatusByIdAndSend(id, Status.ORDER_CREATED, Status.CAR_ASSEMBLED, Status.CAR_ASSEMBLED);
-    }
-
-    @Override
-    @Transactional
-    public Order deliverOrderById(Long id) {
-        return changeOrderStatusByIdAndSend(id, Status.CAR_ASSEMBLED, Status.ORDER_COMPLETED, Status.ON_SALE);
+    public Order changeOrderStatusById(Long id, String action) {
+        Action validatedAction = stringToAction(action);
+        switch (validatedAction) {
+            case ASSEMBLE:
+                return assembleOrderById(id);
+            case DELIVER:
+                return deliverOrderById(id);
+            default:
+                return null;
+        }
     }
 
     @Override
@@ -80,6 +84,21 @@ public class OrderServiceImpl implements OrderService {
                     return orderRepository.save(order);
                 })
                 .orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND));
+    }
+
+    private Action stringToAction(String action) {
+        return Arrays.stream(Action.values())
+                .filter(item -> item.name().equalsIgnoreCase(action))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Such action is not found"));
+    }
+
+    private Order assembleOrderById(Long id) {
+        return changeOrderStatusByIdAndSend(id, Status.ORDER_CREATED, Status.CAR_ASSEMBLED, Status.CAR_ASSEMBLED);
+    }
+
+    private Order deliverOrderById(Long id) {
+        return changeOrderStatusByIdAndSend(id, Status.CAR_ASSEMBLED, Status.ORDER_COMPLETED, Status.ON_SALE);
     }
 
     private Order changeOrderStatusByIdAndSend(Long id, Status oldOrderStatus, Status newOrderStatus, Status newCarStatus) {

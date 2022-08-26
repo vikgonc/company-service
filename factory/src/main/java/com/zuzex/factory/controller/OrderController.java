@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -28,13 +29,8 @@ public class OrderController {
         return orderService.findOrderById(id);
     }
 
-    @PostMapping("/assemble/{id}")
-    public Order assembleOrderById(@PathVariable Long id) {
-        return orderService.assembleOrderById(id);
-    }
-
-    @PostMapping("/deliver/{id}")
-    public Order deliverOrderById(@PathVariable Long id) {
-        return orderService.deliverOrderById(id);
+    @PostMapping("/action/{id}")
+    public Order changeOrderStatus(@PathVariable Long id, @RequestParam String action) {
+        return orderService.changeOrderStatusById(id, action);
     }
 }

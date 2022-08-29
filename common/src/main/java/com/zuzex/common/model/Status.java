@@ -8,5 +8,4 @@ public enum Status {
     ON_SALE,
     SOLD,
     ORDER_CANCELED,
-    PROCESSING_FAILED
 }

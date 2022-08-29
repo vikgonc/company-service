@@ -1,70 +1,70 @@
 package com.zuzex.carshowroom.configuration;
 
+import com.zuzex.common.configuration.BaseKafkaConfiguration;
 import com.zuzex.common.dto.CarStatusDto;
+import com.zuzex.common.dto.CarStatusResultDto;
 import com.zuzex.common.dto.OrderDto;
+import com.zuzex.common.dto.OrderResultDto;
 import lombok.Setter;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerializer;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "kafka")
-public class KafkaConfiguration {
+public class KafkaConfiguration extends BaseKafkaConfiguration {
 
-    private String host;
+    private String bootstrapServer;
     private String consumerGroupId;
     private String autoOffsetReset;
 
     @Bean
-    public KafkaTemplate<String, OrderDto> kafkaTemplate(ProducerFactory<String, OrderDto> producerFactory) {
+    public KafkaTemplate<String, OrderDto> orderKafkaTemplate(ProducerFactory<String, OrderDto> producerFactory) {
+        return new KafkaTemplate<>(producerFactory);
+    }
+
+    @Bean
+    public KafkaTemplate<String, CarStatusResultDto> carStatusResultKafkaTemplate(ProducerFactory<String, CarStatusResultDto> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, CarStatusDto>
-    kafkaListenerContainerFactory(ConsumerFactory<String, CarStatusDto> consumerFactory) {
-        ConcurrentKafkaListenerContainerFactory<String, CarStatusDto> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory);
+    carStatusKafkaListenerContainerFactory(ConsumerFactory<String, CarStatusDto> consumerFactory, KafkaTemplate<String, CarStatusResultDto> kafkaTemplate) {
+        ConcurrentKafkaListenerContainerFactory<String, CarStatusDto> factory = kafkaListenerContainerFactory(consumerFactory);
+        factory.setReplyTemplate(kafkaTemplate);
 
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String, CarStatusDto> consumerFactory() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, host);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId);
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
-        JsonDeserializer<CarStatusDto> objectJsonDeserializer = new JsonDeserializer<>(CarStatusDto.class);
-
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(),
-                objectJsonDeserializer);
+    public ConcurrentKafkaListenerContainerFactory<String, OrderResultDto>
+    orderResultKafkaListenerContainerFactory(ConsumerFactory<String, OrderResultDto> consumerFactory) {
+        return kafkaListenerContainerFactory(consumerFactory);
     }
 
     @Bean
-    public ProducerFactory<String, OrderDto> producerFactory() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, host);
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+    public ConsumerFactory<String, CarStatusDto> carStatusConsumerFactory() {
+        return consumerFactory(bootstrapServer, consumerGroupId, autoOffsetReset, CarStatusDto.class);
+    }
 
-        return new DefaultKafkaProducerFactory<>(props);
+    @Bean
+    public ConsumerFactory<String, OrderResultDto> orderResultConsumerFactory() {
+        return consumerFactory(bootstrapServer, consumerGroupId, autoOffsetReset, OrderResultDto.class);
+    }
+
+    @Bean
+    public ProducerFactory<String, OrderDto> orderProducerFactory() {
+        return producerFactory(bootstrapServer);
+    }
+
+    @Bean
+    public ProducerFactory<String, CarStatusResultDto> carStatusProducerFactory() {
+        return producerFactory(bootstrapServer);
     }
 }

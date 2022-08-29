@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderDto {
 
-    private Long carId;
+    private long carId;
     private String orderDescription;
 }

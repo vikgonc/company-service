@@ -54,18 +54,17 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    @TimeTrackable
     @Transactional
     public Car orderNewCar(OrderCarDto orderCarDto) {
         Car carAfterSave = carRepository.save(
                 Car.builder()
                         .price(orderCarDto.getPrice())
-                        .status(Status.ORDER_CREATED)
+                        .status(Status.PENDING)
                         .model(modelService.findModelById(orderCarDto.getModelId()))
                         .build()
         );
         OrderDto orderDto = new OrderDto(carAfterSave.getId(), orderCarDto.getOrderDescription());
-        sendNewOrderInFactoryService(orderDto);
+        sendNewOrderEvent(orderDto);
 
         return carAfterSave;
     }
@@ -89,7 +88,7 @@ public class CarServiceImpl implements CarService {
         return carRepository.save(carForSale);
     }
 
-    private void sendNewOrderInFactoryService(OrderDto orderDto) {
+    private void sendNewOrderEvent(OrderDto orderDto) {
         ListenableFuture<SendResult<String, OrderDto>> sendResult = kafkaTemplate.send(orderTopic, orderDto);
         sendResult.addCallback(kafkaSendCallback);
     }

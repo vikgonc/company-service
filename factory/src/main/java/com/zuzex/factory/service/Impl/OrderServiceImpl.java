@@ -59,7 +59,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @TimeTrackable
     @Transactional
     public Order changeOrderStatusById(Long id, String action) {
         Action validatedAction = stringToAction(action);
@@ -111,13 +110,13 @@ public class OrderServiceImpl implements OrderService {
                     return orderRepository.save(order);
                 })
                 .orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND));
-        CarStatusDto carStatusDto = new CarStatusDto(orderAfterSave.getCarId(), newCarStatus);
-        sendNewStatusMessageInShowroomService(carStatusDto);
+        CarStatusDto carStatusDto = new CarStatusDto(id, orderAfterSave.getCarId(), newCarStatus);
+        sendNewStatusEvent(carStatusDto);
 
         return orderAfterSave;
     }
 
-    private void sendNewStatusMessageInShowroomService(CarStatusDto carStatusDto) {
+    private void sendNewStatusEvent(CarStatusDto carStatusDto) {
         ListenableFuture<SendResult<String, CarStatusDto>> sendResult = kafkaTemplate.send(carStatusTopic, carStatusDto);
         sendResult.addCallback(kafkaSendCallback);
     }

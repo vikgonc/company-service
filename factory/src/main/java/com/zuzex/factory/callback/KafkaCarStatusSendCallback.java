@@ -1,4 +1,4 @@
-package com.zuzex.factory.service.Impl;
+package com.zuzex.factory.callback;
 
 import com.zuzex.common.callback.BaseKafkaSendCallback;
 import com.zuzex.common.dto.CarStatusDto;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class KafkaCarStatusSendCallbackImpl extends BaseKafkaSendCallback<String, CarStatusDto> {
+public class KafkaCarStatusSendCallback extends BaseKafkaSendCallback<String, CarStatusDto> {
 
     @Lazy
     private final OrderService orderService;

@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class OrderCarDto {
 
+    private long modelId;
     private Double price;
-    private Long modelId;
     private String orderDescription;
 }

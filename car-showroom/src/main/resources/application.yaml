@@ -15,3 +15,4 @@ kafka:
   order-topic: orders
   order-result-topic: orders-result
   car-status-topic: car-status
+  car-status-result-topic: car-status-result

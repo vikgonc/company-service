@@ -5,6 +5,7 @@ import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.exception.NotFoundException;
 import com.zuzex.common.model.Action;
 import com.zuzex.common.model.Status;
+import com.zuzex.factory.mapper.OrderMapper;
 import com.zuzex.factory.model.Order;
 import com.zuzex.factory.repository.OrderRepository;
 import com.zuzex.factory.service.OrderService;
@@ -31,6 +32,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final KafkaTemplate<String, CarStatusDto> kafkaTemplate;
     private final KafkaSendCallback<String, CarStatusDto> kafkaSendCallback;
+    private final OrderMapper orderMapper;
 
     @Value("${kafka.car-status-topic}")
     private String carStatusTopic;
@@ -62,13 +64,11 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public Order changeOrderStatusById(Long id, String action) {
         Action validatedAction = stringToAction(action);
-        switch (validatedAction) {
-            case ASSEMBLE:
-                return assembleOrderById(id);
-            case DELIVER:
-                return deliverOrderById(id);
-            default:
-                return null;
+
+        if (validatedAction.equals(Action.ASSEMBLE)) {
+            return assembleOrderById(id);
+        } else {
+            return deliverOrderById(id);
         }
     }
 
@@ -76,13 +76,11 @@ public class OrderServiceImpl implements OrderService {
     public Order revertOrderStatusById(Long id) {
         return orderRepository.findById(id)
                 .map(order -> {
-                    Status newStatus;
                     if (order.getStatus().equals(Status.CAR_ASSEMBLED)) {
-                        newStatus = Status.ORDER_CREATED;
+                        order.setStatus(Status.ORDER_CREATED);
                     } else {
-                        newStatus = Status.CAR_ASSEMBLED;
+                        order.setStatus(Status.CAR_ASSEMBLED);
                     }
-                    order.setStatus(newStatus);
                     return orderRepository.save(order);
                 })
                 .orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND));
@@ -105,13 +103,11 @@ public class OrderServiceImpl implements OrderService {
 
     private Order changeOrderStatusByIdAndSend(Long id, Status oldOrderStatus, Status newOrderStatus, Status newCarStatus) {
         Order orderAfterSave = orderRepository.findByIdAndStatus(id, oldOrderStatus)
-                .map(order -> {
-                    order.setStatus(newOrderStatus);
-                    return orderRepository.save(order);
-                })
+                .map(order -> orderRepository.save(order.toBuilder()
+                        .status(newOrderStatus)
+                        .build()))
                 .orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND));
-        CarStatusDto carStatusDto = new CarStatusDto(id, orderAfterSave.getCarId(), newCarStatus);
-        sendNewStatusEvent(carStatusDto);
+        sendNewStatusEvent(orderMapper.orderToCarStatusDto(id, orderAfterSave, newCarStatus));
 
         return orderAfterSave;
     }

@@ -34,8 +34,8 @@ public class KafkaConfiguration extends BaseKafkaConfiguration {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, CarStatusDto>
-    carStatusKafkaListenerContainerFactory(ConsumerFactory<String, CarStatusDto> consumerFactory, KafkaTemplate<String, CarStatusResultDto> kafkaTemplate) {
+    public ConcurrentKafkaListenerContainerFactory<String, CarStatusDto> carStatusKafkaListenerContainerFactory(
+            ConsumerFactory<String, CarStatusDto> consumerFactory, KafkaTemplate<String, CarStatusResultDto> kafkaTemplate) {
         ConcurrentKafkaListenerContainerFactory<String, CarStatusDto> factory = kafkaListenerContainerFactory(consumerFactory);
         factory.setReplyTemplate(kafkaTemplate);
 
@@ -43,8 +43,8 @@ public class KafkaConfiguration extends BaseKafkaConfiguration {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderResultDto>
-    orderResultKafkaListenerContainerFactory(ConsumerFactory<String, OrderResultDto> consumerFactory) {
+    public ConcurrentKafkaListenerContainerFactory<String, OrderResultDto> orderResultKafkaListenerContainerFactory(
+            ConsumerFactory<String, OrderResultDto> consumerFactory) {
         return kafkaListenerContainerFactory(consumerFactory);
     }
 

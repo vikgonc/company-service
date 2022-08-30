@@ -1,5 +1,6 @@
 package com.zuzex.carshowroom.service.Impl;
 
+import com.zuzex.carshowroom.mapper.ModelMapper;
 import com.zuzex.carshowroom.model.Model;
 import com.zuzex.carshowroom.repository.ModelRepository;
 import com.zuzex.carshowroom.service.ModelService;
@@ -15,6 +16,7 @@ import java.util.List;
 public class ModelServiceImpl implements ModelService {
 
     private final ModelRepository modelRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public List<Model> findAllModels() {
@@ -29,11 +31,6 @@ public class ModelServiceImpl implements ModelService {
 
     @Override
     public Model createNewModel(ModelDto modelDto) {
-        Model modelToSave = Model.builder()
-                .brand(modelDto.getBrand())
-                .modelName(modelDto.getModelName())
-                .description(modelDto.getDescription())
-                .build();
-        return modelRepository.save(modelToSave);
+        return modelRepository.save(modelMapper.modelDtoToModel(modelDto));
     }
 }

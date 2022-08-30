@@ -37,8 +37,8 @@ public class BaseKafkaConfiguration {
                 objectJsonDeserializer);
     }
 
-    protected <T> ConcurrentKafkaListenerContainerFactory<String, T>
-    kafkaListenerContainerFactory(ConsumerFactory<String, T> consumerFactory) {
+    protected <T> ConcurrentKafkaListenerContainerFactory<String, T> kafkaListenerContainerFactory(
+            ConsumerFactory<String, T> consumerFactory) {
         ConcurrentKafkaListenerContainerFactory<String, T> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);

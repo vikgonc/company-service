@@ -18,11 +18,12 @@ import javax.persistence.Table;
 
 @Data
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "cars")
+@Builder(toBuilder = true)
 public class Car {
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

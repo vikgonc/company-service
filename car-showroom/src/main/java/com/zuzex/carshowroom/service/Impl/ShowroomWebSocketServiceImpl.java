@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Component
 @RequiredArgsConstructor
-public class ShowroomWebWebSocketServiceImpl extends TextWebSocketHandler implements ShowroomWebSocketService {
+public class ShowroomWebSocketServiceImpl extends TextWebSocketHandler implements ShowroomWebSocketService {
 
     private final List<WebSocketSession> activeSessions;
 

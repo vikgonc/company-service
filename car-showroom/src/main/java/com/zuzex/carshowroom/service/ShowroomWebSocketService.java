@@ -4,7 +4,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
 
-public interface ShowroomSocket {
+public interface ShowroomWebSocketService {
 
     List<WebSocketSession> getActiveSessions();
 }

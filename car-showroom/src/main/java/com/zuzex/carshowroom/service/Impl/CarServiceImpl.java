@@ -1,5 +1,6 @@
 package com.zuzex.carshowroom.service.Impl;
 
+import com.zuzex.carshowroom.mapper.CarMapper;
 import com.zuzex.carshowroom.model.Car;
 import com.zuzex.carshowroom.repository.CarRepository;
 import com.zuzex.carshowroom.service.CarService;
@@ -32,6 +33,7 @@ public class CarServiceImpl implements CarService {
     private final ModelService modelService;
     private final KafkaTemplate<String, OrderDto> kafkaTemplate;
     private final KafkaSendCallback<String, OrderDto> kafkaSendCallback;
+    private final CarMapper carMapper;
 
     @Value("${kafka.order-topic}")
     private String orderTopic;
@@ -54,18 +56,10 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    @TimeTrackable
     @Transactional
     public Car orderNewCar(OrderCarDto orderCarDto) {
-        Car carAfterSave = carRepository.save(
-                Car.builder()
-                        .price(orderCarDto.getPrice())
-                        .status(Status.ORDER_CREATED)
-                        .model(modelService.findModelById(orderCarDto.getModelId()))
-                        .build()
-        );
-        OrderDto orderDto = new OrderDto(carAfterSave.getId(), orderCarDto.getOrderDescription());
-        sendNewOrderInFactoryService(orderDto);
+        Car carAfterSave = carRepository.save(carMapper.orderCarDtoToCar(orderCarDto, Status.PENDING, modelService.findModelById(orderCarDto.getModelId())));
+        sendNewOrderEvent(carMapper.orderCarDtoToOrderDto(carAfterSave.getId(), orderCarDto));
 
         return carAfterSave;
     }
@@ -73,23 +67,22 @@ public class CarServiceImpl implements CarService {
     @Override
     public Car setCarStatusById(Long id, Status status) {
         return carRepository.findById(id)
-                .map(car -> {
-                    car.setStatus(status);
-                    return carRepository.save(car);
-                })
+                .map(car -> carRepository.save(car.toBuilder()
+                        .status(status)
+                        .build()))
                 .orElseThrow(() -> new NotFoundException("Such car is not found"));
     }
 
     @Override
     public Car buyCarById(Long id) {
-        Car carForSale = carRepository.findByIdAndStatus(id, Status.ON_SALE)
+        return carRepository.findByIdAndStatus(id, Status.ON_SALE)
+                .map(car -> carRepository.save(car.toBuilder()
+                        .status(Status.SOLD)
+                        .build()))
                 .orElseThrow(() -> new NotFoundException(CAR_NOT_FOUND));
-        carForSale.setStatus(Status.SOLD);
-
-        return carRepository.save(carForSale);
     }
 
-    private void sendNewOrderInFactoryService(OrderDto orderDto) {
+    private void sendNewOrderEvent(OrderDto orderDto) {
         ListenableFuture<SendResult<String, OrderDto>> sendResult = kafkaTemplate.send(orderTopic, orderDto);
         sendResult.addCallback(kafkaSendCallback);
     }

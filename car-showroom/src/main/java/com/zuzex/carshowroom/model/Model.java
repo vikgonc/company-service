@@ -19,6 +19,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Table(name = "models")
 public class Model {
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

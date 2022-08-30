@@ -9,8 +9,10 @@ spring:
     hibernate:
       ddl-auto: validate
 kafka:
-  host: localhost:9092
+  bootstrap-server: localhost:9092
   consumer-group-id: car-status-group
   auto-offset-reset: earliest
   order-topic: orders
+  order-result-topic: orders-result
   car-status-topic: car-status
+  car-status-result-topic: car-status-result

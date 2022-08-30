@@ -1,6 +1,6 @@
 package com.zuzex.common.dto;
 
-import com.zuzex.common.model.Status;
+import com.zuzex.common.model.EventStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CarStatusDto {
+public class OrderResultDto {
 
-    private long orderId;
     private long carId;
-    private Status status;
+    private EventStatus eventStatus;
 }

@@ -1,4 +1,4 @@
-package com.zuzex.carshowroom.service.Impl;
+package com.zuzex.carshowroom.callback;
 
 import com.zuzex.carshowroom.model.Car;
 import com.zuzex.carshowroom.service.CarService;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class KafkaOrderSendCallbackImpl extends BaseKafkaSendCallback<String, OrderDto> {
+public class KafkaOrderSendCallback extends BaseKafkaSendCallback<String, OrderDto> {
 
     @Lazy
     private final CarService carService;
@@ -27,7 +27,7 @@ public class KafkaOrderSendCallbackImpl extends BaseKafkaSendCallback<String, Or
         ProducerRecord<String, OrderDto> failedProducerRecord = ex.getFailedProducerRecord();
         Long invalidCarId = failedProducerRecord.value().getCarId();
 
-        Car fixedCarRecord = carService.setCarStatusById(invalidCarId, Status.PROCESSING_FAILED);
+        Car fixedCarRecord = carService.setCarStatusById(invalidCarId, Status.ORDER_CANCELED);
         log.info("Consistency returned: {}", fixedCarRecord);
     }
 }

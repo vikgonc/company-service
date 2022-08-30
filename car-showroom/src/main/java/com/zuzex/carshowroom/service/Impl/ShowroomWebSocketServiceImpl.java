@@ -1,6 +1,6 @@
 package com.zuzex.carshowroom.service.Impl;
 
-import com.zuzex.carshowroom.service.ShowroomSocket;
+import com.zuzex.carshowroom.service.ShowroomWebSocketService;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +17,13 @@ import java.util.List;
 @Getter
 @Component
 @RequiredArgsConstructor
-public class ShowroomWebSocketImpl extends TextWebSocketHandler implements ShowroomSocket {
+public class ShowroomWebSocketServiceImpl extends TextWebSocketHandler implements ShowroomWebSocketService {
 
     private final List<WebSocketSession> activeSessions;
 
     @Override
     public void afterConnectionEstablished(@NonNull WebSocketSession session) throws Exception {
         session.sendMessage(new TextMessage("Welcome!"));
-
         log.info("Created new session");
         activeSessions.add(session);
     }

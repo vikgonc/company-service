@@ -5,37 +5,27 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 @Data
-@Entity
+@Table("cars")
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "cars")
 @Builder(toBuilder = true)
 public class Car {
 
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column("id")
     private Long id;
 
-    @Column(name = "price")
+    @Column("price")
     private Double price;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
+    @Column("status")
     private Status status;
 
-    @ManyToOne
     private Model model;
 }

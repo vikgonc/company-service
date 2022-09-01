@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,27 +21,27 @@ public class CarController {
     private final CarService carService;
 
     @GetMapping
-    public List<Car> findAllCars() {
+    public Flux<Car> findAllCars() {
         return carService.findAllCars();
     }
 
     @GetMapping("/sale")
-    public List<Car> findAllCarsOnSale() {
+    public Flux<Car> findAllCarsOnSale() {
         return carService.findAllCarsOnSale();
     }
 
     @GetMapping("/{id}")
-    public Car findCarById(@PathVariable Long id) {
+    public Mono<Car> findCarById(@PathVariable Long id) {
         return carService.findCarById(id);
     }
 
     @PostMapping("/order")
-    public Car orderNewCar(@RequestBody OrderCarDto orderCarDto) {
+    public Mono<Car> orderNewCar(@RequestBody OrderCarDto orderCarDto) {
         return carService.orderNewCar(orderCarDto);
     }
 
     @PostMapping("/buy/{id}")
-    public Car buyCarById(@PathVariable Long id) {
+    public Mono<Car> buyCarById(@PathVariable Long id) {
         return carService.buyCarById(id);
     }
 }

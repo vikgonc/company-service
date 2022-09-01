@@ -2,14 +2,14 @@ package com.zuzex.carshowroom.service;
 
 import com.zuzex.carshowroom.model.Model;
 import com.zuzex.common.dto.ModelDto;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface ModelService {
 
-    List<Model> findAllModels();
+    Flux<Model> findAllModels();
 
-    Model findModelById(Long id);
+    Mono<Model> findModelById(Long id);
 
-    Model createNewModel(ModelDto modelDto);
+    Mono<Model> createNewModel(ModelDto modelDto);
 }

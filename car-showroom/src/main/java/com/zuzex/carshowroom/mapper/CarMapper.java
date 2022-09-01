@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CarMapper {
-
+    //todo mapstruct
     public Car orderCarDtoToCar(OrderCarDto orderCarDto, Status status, Model model) {
         return Car.builder()
                 .price(orderCarDto.getPrice())

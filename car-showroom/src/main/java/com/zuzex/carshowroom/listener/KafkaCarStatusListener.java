@@ -1,6 +1,8 @@
 package com.zuzex.carshowroom.listener;
 
+import com.zuzex.carshowroom.dto.CarDto;
 import com.zuzex.carshowroom.service.CarService;
+import com.zuzex.carshowroom.service.SocketCarDtoService;
 import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.dto.CarStatusResultDto;
 import com.zuzex.common.model.EventStatus;
@@ -18,8 +20,7 @@ import org.springframework.stereotype.Component;
 public class KafkaCarStatusListener {
 
     private final CarService carService;
-//    private final ShowroomWebSocketService showroomWebSocketHandler;
-//    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final SocketCarDtoService socketCarDtoService;
 
     @KafkaHandler
     @SendTo("${kafka.car-status-result-topic}")
@@ -30,7 +31,7 @@ public class KafkaCarStatusListener {
             return carService.setCarStatusById(carStatusDto.getCarId(), carStatusDto.getStatus())
                     .doOnNext(carDto -> {
                         log.info("Car '{}' saved", carDto);
-//                        notifyWebSocketClient(carDto);
+                        notifyWebSocketClient(carDto);
                     })
                     .thenReturn(CarStatusResultDto.builder()
                             .orderId(carStatusDto.getOrderId())
@@ -48,13 +49,8 @@ public class KafkaCarStatusListener {
         }
     }
 
-//    private void notifyWebSocketClient(Car updatedCar) throws IOException {
-//        String jsonResponse = objectMapper.writeValueAsString(updatedCar);
-//
-//        showroomWebSocketHandler.getActiveSessions().stream()
-//                .filter(Objects::nonNull)
-//                .forEach(throwingConsumerWrapper(activeSession
-//                        -> activeSession.sendMessage(new TextMessage(jsonResponse))));
-//
-//    }
+    private void notifyWebSocketClient(CarDto updatedCar) {
+        socketCarDtoService.onNext(updatedCar);
+        log.info("Websocket client notified");
+    }
 }

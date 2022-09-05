@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class CarMapper {
 
-    //todo mapstruct
     public CarDto carToCatDto(Car car, Model model) {
         return CarDto.builder()
                 .id(car.getId())

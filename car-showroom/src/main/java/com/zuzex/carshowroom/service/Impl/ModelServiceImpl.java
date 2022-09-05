@@ -16,6 +16,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ModelServiceImpl implements ModelService {
 
+    private static final String MODEL_NOT_FOUND = "Such model not found";
+
     private final ModelRepository modelRepository;
     private final ModelMapper modelMapper;
 
@@ -28,7 +30,7 @@ public class ModelServiceImpl implements ModelService {
     @Override
     public Mono<Model> findModelById(Long id) {
         return modelRepository.findById(id)
-                .switchIfEmpty(Mono.error(new NotFoundException("Such model not found")));
+                .switchIfEmpty(Mono.error(new NotFoundException(MODEL_NOT_FOUND)));
     }
 
     @Override

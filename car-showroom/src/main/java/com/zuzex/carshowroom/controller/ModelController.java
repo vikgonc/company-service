@@ -4,7 +4,6 @@ import com.zuzex.carshowroom.model.Model;
 import com.zuzex.carshowroom.service.ModelService;
 import com.zuzex.common.dto.ModelDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;

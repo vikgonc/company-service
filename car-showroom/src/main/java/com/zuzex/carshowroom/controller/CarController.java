@@ -1,6 +1,6 @@
 package com.zuzex.carshowroom.controller;
 
-import com.zuzex.carshowroom.model.Car;
+import com.zuzex.carshowroom.dto.CarDto;
 import com.zuzex.carshowroom.service.CarService;
 import com.zuzex.common.dto.OrderCarDto;
 import lombok.RequiredArgsConstructor;
@@ -21,27 +21,27 @@ public class CarController {
     private final CarService carService;
 
     @GetMapping
-    public Flux<Car> findAllCars() {
+    public Flux<CarDto> findAllCars() {
         return carService.findAllCars();
     }
 
     @GetMapping("/sale")
-    public Flux<Car> findAllCarsOnSale() {
+    public Flux<CarDto> findAllCarsOnSale() {
         return carService.findAllCarsOnSale();
     }
 
     @GetMapping("/{id}")
-    public Mono<Car> findCarById(@PathVariable Long id) {
+    public Mono<CarDto> findCarById(@PathVariable Long id) {
         return carService.findCarById(id);
     }
 
     @PostMapping("/order")
-    public Mono<Car> orderNewCar(@RequestBody OrderCarDto orderCarDto) {
+    public Mono<CarDto> orderNewCar(@RequestBody OrderCarDto orderCarDto) {
         return carService.orderNewCar(orderCarDto);
     }
 
     @PostMapping("/buy/{id}")
-    public Mono<Car> buyCarById(@PathVariable Long id) {
+    public Mono<CarDto> buyCarById(@PathVariable Long id) {
         return carService.buyCarById(id);
     }
 }

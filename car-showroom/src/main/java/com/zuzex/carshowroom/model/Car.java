@@ -9,7 +9,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-
 @Data
 @Table("cars")
 @NoArgsConstructor
@@ -27,5 +26,6 @@ public class Car {
     @Column("status")
     private Status status;
 
-    private Model model;
+    @Column("model_id")
+    private Long modelId;
 }

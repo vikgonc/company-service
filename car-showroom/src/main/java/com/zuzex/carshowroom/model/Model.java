@@ -4,33 +4,26 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 @Data
-@Entity
 @Builder
+@Table("models")
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "models")
 public class Model {
 
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "brand")
+    @Column("brand")
     private String brand;
 
-    @Column(name = "model_name")
+    @Column("model_name")
     private String modelName;
 
-    @Column(name = "description")
+    @Column("description")
     private String description;
 }

@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,17 +21,17 @@ public class ModelController {
     private final ModelService modelService;
 
     @GetMapping
-    public List<Model> findAllModels() {
+    public Flux<Model> findAllModels() {
         return modelService.findAllModels();
     }
 
     @GetMapping("/{id}")
-    public Model findModelById(@PathVariable Long id) {
+    public Mono<Model> findModelById(@PathVariable Long id) {
         return modelService.findModelById(id);
     }
 
     @PostMapping("/create")
-    public Model createNewModel(@RequestBody ModelDto modelDto) {
+    public Mono<Model> createNewModel(@RequestBody ModelDto modelDto) {
         return modelService.createNewModel(modelDto);
     }
 }

@@ -1,6 +1,5 @@
 package com.zuzex.factory.configuration;
 
-import com.zuzex.common.configuration.BaseKafkaConfiguration;
 import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.dto.CarStatusResultDto;
 import com.zuzex.common.dto.OrderDto;

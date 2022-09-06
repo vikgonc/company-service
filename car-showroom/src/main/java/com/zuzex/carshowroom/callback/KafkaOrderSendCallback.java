@@ -1,6 +1,5 @@
 package com.zuzex.carshowroom.callback;
 
-import com.zuzex.carshowroom.model.Car;
 import com.zuzex.carshowroom.service.CarService;
 import com.zuzex.common.callback.BaseKafkaSendCallback;
 import com.zuzex.common.dto.OrderDto;
@@ -23,11 +22,12 @@ public class KafkaOrderSendCallback extends BaseKafkaSendCallback<String, OrderD
 
     @Override
     public void onFailure(@NonNull KafkaProducerException ex) {
-        log.info("Message \"{}\" failed for reason: {}", ex.getFailedProducerRecord().value(), ex.getMessage());
+        log.info("Message '{}' failed for reason: {}", ex.getFailedProducerRecord().value(), ex.getMessage());
         ProducerRecord<String, OrderDto> failedProducerRecord = ex.getFailedProducerRecord();
         Long invalidCarId = failedProducerRecord.value().getCarId();
 
-        Car fixedCarRecord = carService.setCarStatusById(invalidCarId, Status.ORDER_CANCELED);
-        log.info("Consistency returned: {}", fixedCarRecord);
+        carService.setCarStatusById(invalidCarId, Status.ORDER_CANCELED)
+                .doOnNext(savedCar -> log.info("Consistency returned: {}", savedCar))
+                .subscribe();
     }
 }

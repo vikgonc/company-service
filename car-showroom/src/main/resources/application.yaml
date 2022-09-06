@@ -1,8 +1,8 @@
 server:
   port: 8081
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5400/db
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5400/db
     username: admin
     password: root
   jpa:

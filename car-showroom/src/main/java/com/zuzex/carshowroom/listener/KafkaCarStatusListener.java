@@ -1,9 +1,8 @@
 package com.zuzex.carshowroom.listener;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zuzex.carshowroom.model.Car;
+import com.zuzex.carshowroom.dto.CarDto;
 import com.zuzex.carshowroom.service.CarService;
-import com.zuzex.carshowroom.service.ShowroomWebSocketService;
+import com.zuzex.carshowroom.service.SocketCarDtoService;
 import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.dto.CarStatusResultDto;
 import com.zuzex.common.model.EventStatus;
@@ -13,12 +12,8 @@ import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.TextMessage;
-
-import java.io.IOException;
-import java.util.Objects;
-
-import static com.zuzex.common.util.ThrowingConsumer.throwingConsumerWrapper;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Slf4j
 @Component
@@ -27,40 +22,36 @@ import static com.zuzex.common.util.ThrowingConsumer.throwingConsumerWrapper;
 public class KafkaCarStatusListener {
 
     private final CarService carService;
-    private final ShowroomWebSocketService showroomWebSocketHandler;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final SocketCarDtoService socketCarDtoService;
 
     @KafkaHandler
     @SendTo("${kafka.car-status-result-topic}")
     public CarStatusResultDto handleCarStatus(CarStatusDto carStatusDto) {
-        try {
-            log.info("Message '{}' received", carStatusDto);
-            Car savedCar = carService.setCarStatusById(carStatusDto.getCarId(), carStatusDto.getStatus());
-            notifyWebSocketClient(savedCar);
-            log.info("Car '{}' saved", savedCar);
+        log.info("Message '{}' received", carStatusDto);
 
-            return CarStatusResultDto.builder()
-                    .orderId(carStatusDto.getOrderId())
-                    .eventStatus(EventStatus.SUCCESS)
-                    .build();
-
-        } catch (Exception e) {
-            log.info("Something went wrong... {}", e.getMessage());
-
-            return CarStatusResultDto.builder()
-                    .orderId(carStatusDto.getOrderId())
-                    .eventStatus(EventStatus.FAILED)
-                    .build();
-        }
+        return carService.setCarStatusById(carStatusDto.getCarId(), carStatusDto.getStatus())
+                .doOnNext(carDto -> {
+                    log.info("Car '{}' saved", carDto);
+                    notifyWebSocketClient(carDto);
+                })
+                .thenReturn(CarStatusResultDto.builder()
+                        .orderId(carStatusDto.getOrderId())
+                        .eventStatus(EventStatus.SUCCESS)
+                        .build())
+                .subscribeOn(Schedulers.boundedElastic())
+                .onErrorResume(ex -> Mono.defer(() -> {
+                            log.info("Something went wrong... {}", ex.getMessage());
+                            return Mono.just(CarStatusResultDto.builder()
+                                    .orderId(carStatusDto.getOrderId())
+                                    .eventStatus(EventStatus.FAILED)
+                                    .build());
+                        }
+                ))
+                .block();
     }
 
-    private void notifyWebSocketClient(Car updatedCar) throws IOException {
-        String jsonResponse = objectMapper.writeValueAsString(updatedCar);
-
-        showroomWebSocketHandler.getActiveSessions().stream()
-                .filter(Objects::nonNull)
-                .forEach(throwingConsumerWrapper(activeSession
-                        -> activeSession.sendMessage(new TextMessage(jsonResponse))));
-
+    private void notifyWebSocketClient(CarDto updatedCar) {
+        socketCarDtoService.onNext(updatedCar);
+        log.info("Websocket client notified");
     }
 }

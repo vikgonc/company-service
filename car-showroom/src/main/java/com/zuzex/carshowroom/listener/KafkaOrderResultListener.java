@@ -23,11 +23,13 @@ public class KafkaOrderResultListener {
         log.info("Result of save order: {}", orderResultDto);
 
         if (orderResultDto.getEventStatus().equals(EventStatus.SUCCESS)) {
-            carService.setCarStatusById(orderResultDto.getCarId(), Status.ORDER_CREATED);
-            log.info("Order created");
+            carService.setCarStatusById(orderResultDto.getCarId(), Status.ORDER_CREATED)
+                    .doOnNext(carDto -> log.info("Order created: '{}'", carDto))
+                    .subscribe();
         } else {
-            carService.setCarStatusById(orderResultDto.getCarId(), Status.ORDER_CANCELED);
-            log.info("Order canceled");
+            carService.setCarStatusById(orderResultDto.getCarId(), Status.ORDER_CANCELED)
+                    .doOnNext(carDto -> log.info("Order canceled: '{}'", carDto))
+                    .subscribe();
         }
     }
 }

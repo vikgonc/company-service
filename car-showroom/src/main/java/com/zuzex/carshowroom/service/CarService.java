@@ -1,22 +1,22 @@
 package com.zuzex.carshowroom.service;
 
-import com.zuzex.carshowroom.model.Car;
+import com.zuzex.carshowroom.dto.CarDto;
 import com.zuzex.common.dto.OrderCarDto;
 import com.zuzex.common.model.Status;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface CarService {
 
-    List<Car> findAllCars();
+    Flux<CarDto> findAllCars();
 
-    List<Car> findAllCarsOnSale();
+    Flux<CarDto> findAllCarsOnSale();
 
-    Car findCarById(Long id);
+    Mono<CarDto> findCarById(Long id);
 
-    Car orderNewCar(OrderCarDto orderCarDto);
+    Mono<CarDto> orderNewCar(OrderCarDto orderCarDto);
 
-    Car setCarStatusById(Long id, Status status);
+    Mono<CarDto> setCarStatusById(Long id, Status status);
 
-    Car buyCarById(Long id);
+    Mono<CarDto> buyCarById(Long id);
 }

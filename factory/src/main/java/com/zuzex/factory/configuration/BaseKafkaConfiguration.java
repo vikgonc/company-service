@@ -1,4 +1,4 @@
-package com.zuzex.common.configuration;
+package com.zuzex.factory.configuration;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;

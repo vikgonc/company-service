@@ -28,6 +28,7 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private static final String ORDER_NOT_FOUND = "Such order is not found";
+    private static final String ACTION_NOT_FOUND = "Such action is not found";
 
     private final OrderRepository orderRepository;
     private final KafkaTemplate<String, CarStatusDto> kafkaTemplate;
@@ -90,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
         return Arrays.stream(Action.values())
                 .filter(item -> item.name().equalsIgnoreCase(action))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Such action is not found"));
+                .orElseThrow(() -> new NotFoundException(ACTION_NOT_FOUND));
     }
 
     private Order assembleOrderById(Long id) {

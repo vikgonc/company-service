@@ -15,6 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import static com.zuzex.carshowroom.service.Impl.ModelServiceImpl.MODEL_NOT_FOUND;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -44,7 +45,8 @@ public class ModelServiceImplTests {
         when(modelRepository.findAll())
                 .thenReturn(Flux.just(response));
 
-        StepVerifier.create(modelService.findAllModels())
+        StepVerifier
+                .create(modelService.findAllModels())
                 .expectSubscription()
                 .expectNext(response)
                 .verifyComplete();
@@ -52,7 +54,8 @@ public class ModelServiceImplTests {
         when(modelRepository.findAll())
                 .thenReturn(Flux.empty());
 
-        StepVerifier.create(modelService.findAllModels())
+        StepVerifier
+                .create(modelService.findAllModels())
                 .expectSubscription()
                 .verifyComplete();
     }
@@ -62,7 +65,8 @@ public class ModelServiceImplTests {
         when(modelRepository.findById(anyLong()))
                 .thenReturn(Mono.just(response));
 
-        StepVerifier.create(modelService.findModelById(1L))
+        StepVerifier
+                .create(modelService.findModelById(1L))
                 .expectSubscription()
                 .expectNext(response)
                 .verifyComplete();
@@ -70,10 +74,11 @@ public class ModelServiceImplTests {
         when(modelRepository.findById(anyLong()))
                 .thenReturn(Mono.empty());
 
-        StepVerifier.create(modelService.findModelById(1L))
+        StepVerifier
+                .create(modelService.findModelById(1L))
                 .expectSubscription()
                 .expectErrorMatches(throwable -> throwable instanceof NotFoundException
-                        && throwable.getMessage().equals("Such model not found"))
+                        && throwable.getMessage().equals(MODEL_NOT_FOUND))
                 .verify();
     }
 
@@ -82,7 +87,8 @@ public class ModelServiceImplTests {
         when(modelRepository.save(any(Model.class)))
                 .thenReturn(Mono.just(response));
 
-        StepVerifier.create(modelService.createNewModel(new ModelDto()))
+        StepVerifier
+                .create(modelService.createNewModel(new ModelDto()))
                 .expectSubscription()
                 .expectNext(response)
                 .verifyComplete();

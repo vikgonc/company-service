@@ -27,8 +27,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private static final String ORDER_NOT_FOUND = "Such order is not found";
-    private static final String ACTION_NOT_FOUND = "Such action is not found";
+    public static final String ORDER_NOT_FOUND = "Such order is not found";
+    public static final String ACTION_NOT_FOUND = "Such action is not found";
 
     private final OrderRepository orderRepository;
     private final KafkaTemplate<String, CarStatusDto> kafkaTemplate;

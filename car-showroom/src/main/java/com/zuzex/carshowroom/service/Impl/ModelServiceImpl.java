@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ModelServiceImpl implements ModelService {
 
-    private static final String MODEL_NOT_FOUND = "Such model not found";
+    public static final String MODEL_NOT_FOUND = "Such model not found";
 
     private final ModelRepository modelRepository;
     private final ModelMapper modelMapper;

@@ -26,7 +26,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
 
-    private static final String CAR_NOT_FOUND = "Such car is not found";
+    public static final String CAR_NOT_FOUND = "Such car is not found";
 
     private final CarRepository carRepository;
     private final ModelService modelService;

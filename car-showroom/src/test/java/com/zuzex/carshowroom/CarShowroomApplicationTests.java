@@ -9,5 +9,4 @@ class CarShowroomApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }

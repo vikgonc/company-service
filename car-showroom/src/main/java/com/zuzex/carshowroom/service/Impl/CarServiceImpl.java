@@ -21,12 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static com.zuzex.common.util.ResponseConstant.CAR_NOT_FOUND;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
-
-    private static final String CAR_NOT_FOUND = "Such car is not found";
 
     private final CarRepository carRepository;
     private final ModelService modelService;

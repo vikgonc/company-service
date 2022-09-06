@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static com.zuzex.common.util.ResponseConstant.MODEL_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class ModelServiceImpl implements ModelService {
-
-    private static final String MODEL_NOT_FOUND = "Such model not found";
 
     private final ModelRepository modelRepository;
     private final ModelMapper modelMapper;

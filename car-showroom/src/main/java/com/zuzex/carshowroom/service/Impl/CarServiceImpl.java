@@ -16,10 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaSendCallback;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.concurrent.ListenableFuture;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -71,9 +69,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public Mono<CarDto> setCarStatusById(Long id, Status status) {
         return createCarMonoDto(carRepository.findById(id)
-                .flatMap(car -> carRepository.save(car.toBuilder()
-                        .status(status)
-                        .build())))
+                .flatMap(car -> carRepository.save(car.toBuilder().status(status).build())))
                 .switchIfEmpty(Mono.error(new NotFoundException(CAR_NOT_FOUND)));
     }
 
@@ -87,19 +83,23 @@ public class CarServiceImpl implements CarService {
     }
 
     private void sendNewOrderEvent(OrderDto orderDto) {
-        ListenableFuture<SendResult<String, OrderDto>> sendResult = kafkaTemplate.send(orderTopic, orderDto);
-        sendResult.addCallback(kafkaSendCallback);
+        Mono.fromFuture(kafkaTemplate.send(orderTopic, orderDto).completable())
+                .doOnSuccess(kafkaSendCallback::onSuccess)
+                .doOnError(kafkaSendCallback::onFailure)
+                .subscribe();
     }
 
     private Mono<CarDto> createCarMonoDto(Mono<Car> corePublisher) {
         return corePublisher.flatMap(car ->
                 modelService.findModelById(car.getModelId())
-                        .map(model -> carMapper.carToCatDto(car, model)));
+                        .map(model -> carMapper.carToCatDto(car, model))
+        );
     }
 
     private Flux<CarDto> createCarFluxDto(Flux<Car> corePublisher) {
         return corePublisher.flatMap(car ->
                 modelService.findModelById(car.getModelId())
-                        .map(model -> carMapper.carToCatDto(car, model)));
+                        .map(model -> carMapper.carToCatDto(car, model))
+        );
     }
 }

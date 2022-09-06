@@ -22,13 +22,13 @@ import org.springframework.util.concurrent.ListenableFuture;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.zuzex.common.util.ResponseConstant.ACTION_NOT_FOUND;
+import static com.zuzex.common.util.ResponseConstant.ORDER_NOT_FOUND;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
-
-    public static final String ORDER_NOT_FOUND = "Such order is not found";
-    public static final String ACTION_NOT_FOUND = "Such action is not found";
 
     private final OrderRepository orderRepository;
     private final KafkaTemplate<String, CarStatusDto> kafkaTemplate;

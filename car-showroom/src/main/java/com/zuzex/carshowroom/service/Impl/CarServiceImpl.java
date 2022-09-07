@@ -2,6 +2,7 @@ package com.zuzex.carshowroom.service.Impl;
 
 import com.zuzex.carshowroom.dto.CarDto;
 import com.zuzex.carshowroom.mapper.CarMapper;
+import com.zuzex.carshowroom.mapper.OrderMapper;
 import com.zuzex.carshowroom.model.Car;
 import com.zuzex.carshowroom.repository.CarRepository;
 import com.zuzex.carshowroom.service.CarService;
@@ -10,6 +11,8 @@ import com.zuzex.common.aop.TimeTrackable;
 import com.zuzex.common.dto.OrderCarDto;
 import com.zuzex.common.dto.OrderDto;
 import com.zuzex.common.exception.NotFoundException;
+import com.zuzex.common.grpc.dto.CommonDto;
+import com.zuzex.common.grpc.service.CommonServiceGrpc;
 import com.zuzex.common.model.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +36,8 @@ public class CarServiceImpl implements CarService {
     private final KafkaTemplate<String, OrderDto> kafkaTemplate;
     private final KafkaSendCallback<String, OrderDto> kafkaSendCallback;
     private final CarMapper carMapper;
+    private final OrderMapper orderMapper;
+    private final CommonServiceGrpc.CommonServiceBlockingStub grpcStub;
 
     @Value("${kafka.order-topic}")
     private String orderTopic;
@@ -83,10 +88,15 @@ public class CarServiceImpl implements CarService {
     }
 
     private void sendNewOrderEvent(OrderDto orderDto) {
-        Mono.fromFuture(kafkaTemplate.send(orderTopic, orderDto).completable())
-                .doOnSuccess(kafkaSendCallback::onSuccess)
-                .doOnError(kafkaSendCallback::onFailure)
-                .subscribe();
+        CommonDto.OrderResultDto carOrderResult = grpcStub.createNewCarOrder(orderMapper.orderDtoToGrpcOrderDto(orderDto));
+        log.info("Result of save order: {}", orderMapper.grpcOrderResultDtoToOrderResultDto(carOrderResult));
+
+//todo ждать пока сохраним кара, иначе sql exception
+
+//        Mono.fromFuture(kafkaTemplate.send(orderTopic, orderDto).completable())
+//                .doOnSuccess(kafkaSendCallback::onSuccess)
+//                .doOnError(kafkaSendCallback::onFailure)
+//                .subscribe();
     }
 
     private Mono<CarDto> createCarMonoDto(Mono<Car> corePublisher) {

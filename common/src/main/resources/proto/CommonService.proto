@@ -4,5 +4,5 @@ package com.zuzex.common.grpc.service;
 import "CommonDto.proto";
 
 service CommonService {
-  rpc sendNewCarOrder(com.zuzex.common.grpc.dto.RequestOrderDto) returns (com.zuzex.common.grpc.dto.ResponseOrderDto){}
+  rpc createNewCarOrder(com.zuzex.common.grpc.dto.OrderDto) returns (com.zuzex.common.grpc.dto.OrderResultDto){}
 }

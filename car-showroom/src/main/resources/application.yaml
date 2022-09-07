@@ -1,5 +1,6 @@
 server:
   port: 8081
+
 spring:
   r2dbc:
     url: r2dbc:postgresql://localhost:5400/db
@@ -8,6 +9,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+
 kafka:
   bootstrap-server: localhost:9092
   consumer-group-id: car-status-group
@@ -16,3 +18,7 @@ kafka:
   order-result-topic: orders-result
   car-status-topic: car-status
   car-status-result-topic: car-status-result
+
+grpc-server:
+  host: localhost
+  port: 8888

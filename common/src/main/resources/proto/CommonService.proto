@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package com.zuzex.common.grpc.service;
+import "CommonDto.proto";
+
+service CommonService {
+  rpc sendNewCarOrder(com.zuzex.common.grpc.dto.RequestOrderDto) returns (com.zuzex.common.grpc.dto.ResponseOrderDto){}
+}

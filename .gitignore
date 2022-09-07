@@ -3,6 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+/common/src/main/java/com/zuzex/common/grpc/
 
 ### STS ###
 .apt_generated

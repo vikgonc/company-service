@@ -19,13 +19,13 @@ public class GrpcConfiguration {
     private Integer port;
 
     @Bean
-    public CommonServiceGrpc.CommonServiceFutureStub grpcStub() {
+    public CommonServiceGrpc.CommonServiceBlockingStub grpcStub() {
         var channel = ManagedChannelBuilder
                 .forAddress(host, port)
                 .usePlaintext()
                 .build();
         return CommonServiceGrpc
-                .newFutureStub(channel);
+                .newBlockingStub(channel);
     }
 
     @Bean

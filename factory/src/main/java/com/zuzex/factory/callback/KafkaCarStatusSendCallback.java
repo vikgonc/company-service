@@ -22,7 +22,7 @@ public class KafkaCarStatusSendCallback extends BaseKafkaSendCallback<String, Ca
 
     @Override
     public void onFailure(@NonNull KafkaProducerException ex) {
-        log.info("Message \"{}\" failed for reason: {}", ex.getFailedProducerRecord().value(), ex.getMessage());
+        log.info("Message '{}' failed for reason: {}", ex.getFailedProducerRecord().value(), ex.getMessage());
         ProducerRecord<String, CarStatusDto> failedProducerRecord = ex.getFailedProducerRecord();
         Long invalidOrderId = failedProducerRecord.value().getCarId();
 

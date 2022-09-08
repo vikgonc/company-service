@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.TimeUnit;
+
 import static com.zuzex.common.util.ResponseConstant.CAR_NOT_FOUND;
 
 @Slf4j
@@ -83,8 +85,10 @@ public class CarServiceImpl implements CarService {
 
     private void sendNewOrderEvent(OrderDto orderDto) {
         try {
-            CommonDto.OrderResultDto carOrderResult
-                    = grpcStub.createNewCarOrder(orderMapper.orderDtoToGrpcOrderDto(orderDto));
+            CommonDto.OrderResultDto carOrderResult = grpcStub
+                    .withDeadlineAfter(10, TimeUnit.SECONDS)
+                    .createNewCarOrder(orderMapper.orderDtoToGrpcOrderDto(orderDto));
+
             OrderResultDto resultDto = orderMapper.grpcOrderResultDtoToOrderResultDto(carOrderResult);
             log.info("Result of send car order: {}", resultDto);
 

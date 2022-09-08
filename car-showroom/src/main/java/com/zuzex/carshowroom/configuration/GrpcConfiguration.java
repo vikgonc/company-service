@@ -7,6 +7,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "grpc-server")
@@ -16,12 +19,17 @@ public class GrpcConfiguration {
     private Integer port;
 
     @Bean
-    public CommonServiceGrpc.CommonServiceBlockingStub grpcStub() {
+    public CommonServiceGrpc.CommonServiceFutureStub grpcStub() {
         var channel = ManagedChannelBuilder
                 .forAddress(host, port)
                 .usePlaintext()
                 .build();
         return CommonServiceGrpc
-                .newBlockingStub(channel);
+                .newFutureStub(channel);
+    }
+
+    @Bean
+    public Executor grpcCallbackExecutor() {
+        return Executors.newCachedThreadPool();
     }
 }

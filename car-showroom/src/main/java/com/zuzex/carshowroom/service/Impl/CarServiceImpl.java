@@ -1,5 +1,8 @@
 package com.zuzex.carshowroom.service.Impl;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.zuzex.carshowroom.callback.FutureOrderSendCallback;
 import com.zuzex.carshowroom.dto.CarDto;
 import com.zuzex.carshowroom.mapper.CarMapper;
 import com.zuzex.carshowroom.mapper.OrderMapper;
@@ -16,13 +19,12 @@ import com.zuzex.common.grpc.service.CommonServiceGrpc;
 import com.zuzex.common.model.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaSendCallback;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.concurrent.Executor;
 
 import static com.zuzex.common.util.ResponseConstant.CAR_NOT_FOUND;
 
@@ -33,14 +35,11 @@ public class CarServiceImpl implements CarService {
 
     private final CarRepository carRepository;
     private final ModelService modelService;
-    private final KafkaTemplate<String, OrderDto> kafkaTemplate;
-    private final KafkaSendCallback<String, OrderDto> kafkaSendCallback;
     private final CarMapper carMapper;
     private final OrderMapper orderMapper;
-    private final CommonServiceGrpc.CommonServiceBlockingStub grpcStub;
-
-    @Value("${kafka.order-topic}")
-    private String orderTopic;
+    private final CommonServiceGrpc.CommonServiceFutureStub grpcStub;
+    private final FutureOrderSendCallback orderCallback;
+    private final Executor grpcCallbackExecutor;
 
     @Override
     @TimeTrackable
@@ -88,15 +87,8 @@ public class CarServiceImpl implements CarService {
     }
 
     private void sendNewOrderEvent(OrderDto orderDto) {
-        CommonDto.OrderResultDto carOrderResult = grpcStub.createNewCarOrder(orderMapper.orderDtoToGrpcOrderDto(orderDto));
-        log.info("Result of save order: {}", orderMapper.grpcOrderResultDtoToOrderResultDto(carOrderResult));
-
-//todo ждать пока сохраним кара, иначе sql exception
-
-//        Mono.fromFuture(kafkaTemplate.send(orderTopic, orderDto).completable())
-//                .doOnSuccess(kafkaSendCallback::onSuccess)
-//                .doOnError(kafkaSendCallback::onFailure)
-//                .subscribe();
+        ListenableFuture<CommonDto.OrderResultDto> carOrderResult = grpcStub.createNewCarOrder(orderMapper.orderDtoToGrpcOrderDto(orderDto));
+        Futures.addCallback(carOrderResult, orderCallback, grpcCallbackExecutor);
     }
 
     private Mono<CarDto> createCarMonoDto(Mono<Car> corePublisher) {

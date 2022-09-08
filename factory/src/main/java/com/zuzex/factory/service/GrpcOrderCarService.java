@@ -15,7 +15,7 @@ import org.lognet.springboot.grpc.GRpcService;
 @Slf4j
 @GRpcService
 @RequiredArgsConstructor
-public class GrpcCarService extends CommonServiceGrpc.CommonServiceImplBase {
+public class GrpcOrderCarService extends CommonServiceGrpc.CommonServiceImplBase {
 
     private final OrderService orderService;
     private final OrderMapper orderMapper;
@@ -32,6 +32,7 @@ public class GrpcCarService extends CommonServiceGrpc.CommonServiceImplBase {
 
             responseObserver.onNext(orderMapper.orderResultDtoToGrpcOrderResultDto(
                     OrderResultDto.builder()
+                            .carId(orderAfterSave.getCarId())
                             .eventStatus(EventStatus.SUCCESS)
                             .build()));
         } catch (Exception ex) {
@@ -39,6 +40,7 @@ public class GrpcCarService extends CommonServiceGrpc.CommonServiceImplBase {
 
             responseObserver.onNext(orderMapper.orderResultDtoToGrpcOrderResultDto(
                     OrderResultDto.builder()
+                            .carId(orderDto.getCarId())
                             .eventStatus(EventStatus.FAILED)
                             .build()));
         } finally {

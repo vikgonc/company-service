@@ -1,7 +1,6 @@
 package com.zuzex.factory.service;
 
 import com.zuzex.common.dto.OrderDto;
-import com.zuzex.common.dto.OrderResultDto;
 import com.zuzex.common.grpc.dto.CommonDto;
 import com.zuzex.common.grpc.service.CommonServiceGrpc;
 import com.zuzex.common.model.EventStatus;
@@ -30,19 +29,11 @@ public class GrpcOrderCarService extends CommonServiceGrpc.CommonServiceImplBase
                     = orderService.createNewOrderByCarIdAndDescription(orderDto.getCarId(), orderDto.getOrderDescription());
             log.info("Order '{}' saved", orderAfterSave);
 
-            responseObserver.onNext(orderMapper.orderResultDtoToGrpcOrderResultDto(
-                    OrderResultDto.builder()
-                            .carId(orderAfterSave.getCarId())
-                            .eventStatus(EventStatus.SUCCESS)
-                            .build()));
+            responseObserver.onNext(orderMapper.toGrpcOrderResultDto(orderAfterSave.getCarId(), EventStatus.SUCCESS));
         } catch (Exception ex) {
             log.info("Something went wrong... {}", ex.getMessage());
 
-            responseObserver.onNext(orderMapper.orderResultDtoToGrpcOrderResultDto(
-                    OrderResultDto.builder()
-                            .carId(orderDto.getCarId())
-                            .eventStatus(EventStatus.FAILED)
-                            .build()));
+            responseObserver.onNext(orderMapper.toGrpcOrderResultDto(orderDto.getCarId(), EventStatus.SUCCESS));
         } finally {
             responseObserver.onCompleted();
         }

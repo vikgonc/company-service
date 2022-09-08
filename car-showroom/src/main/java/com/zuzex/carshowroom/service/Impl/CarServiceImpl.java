@@ -61,7 +61,7 @@ public class CarServiceImpl implements CarService {
         return modelService.findModelById(orderCarDto.getModelId())
                 .flatMap(model -> carRepository.save(carMapper.orderCarDtoToCar(orderCarDto, Status.PENDING))
                         .map(car -> {
-                            sendNewOrderEvent(carMapper.orderCarDtoToOrderDto(car.getId(), orderCarDto));
+                            sendNewOrderEvent(carMapper.toOrderDto(car.getId(), orderCarDto.getOrderDescription()));
                             return carMapper.carToCatDto(car, model);
                         }))
                 .switchIfEmpty(Mono.error(new NotFoundException(CAR_NOT_FOUND)));

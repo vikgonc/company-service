@@ -6,32 +6,16 @@ import com.zuzex.carshowroom.model.Model;
 import com.zuzex.common.dto.OrderCarDto;
 import com.zuzex.common.dto.OrderDto;
 import com.zuzex.common.model.Status;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class CarMapper {
+@Mapper(componentModel = "spring")
+public interface CarMapper {
 
-    public CarDto carToCatDto(Car car, Model model) {
-        return CarDto.builder()
-                .id(car.getId())
-                .price(car.getPrice())
-                .status(car.getStatus())
-                .model(model)
-                .build();
-    }
+    @Mapping(source = "car.id", target = "id")
+    CarDto carToCatDto(Car car, Model model);
 
-    public Car orderCarDtoToCar(OrderCarDto orderCarDto, Status status) {
-        return Car.builder()
-                .price(orderCarDto.getPrice())
-                .status(status)
-                .modelId(orderCarDto.getModelId())
-                .build();
-    }
+    Car orderCarDtoToCar(OrderCarDto orderCarDto, Status status);
 
-    public OrderDto orderCarDtoToOrderDto(long carId, OrderCarDto orderCarDto) {
-        return OrderDto.builder()
-                .carId(carId)
-                .orderDescription(orderCarDto.getOrderDescription())
-                .build();
-    }
+    OrderDto toOrderDto(Long carId, String orderDescription);
 }

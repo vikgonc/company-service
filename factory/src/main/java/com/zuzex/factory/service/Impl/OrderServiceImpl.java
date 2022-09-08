@@ -108,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
                         .status(newOrderStatus)
                         .build()))
                 .orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND));
-        sendNewStatusEvent(orderMapper.orderToCarStatusDto(id, orderAfterSave, newCarStatus));
+        sendNewStatusEvent(orderMapper.toCarStatusDto(id, orderAfterSave.getCarId(), newCarStatus));
 
         return orderAfterSave;
     }

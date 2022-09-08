@@ -2,34 +2,17 @@ package com.zuzex.factory.mapper;
 
 import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.dto.OrderDto;
-import com.zuzex.common.dto.OrderResultDto;
 import com.zuzex.common.grpc.dto.CommonDto;
+import com.zuzex.common.model.EventStatus;
 import com.zuzex.common.model.Status;
-import com.zuzex.factory.model.Order;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class OrderMapper {
+@Mapper(componentModel = "spring")
+public interface OrderMapper {
 
-    public CarStatusDto orderToCarStatusDto(long orderId, Order order, Status status) {
-        return CarStatusDto.builder()
-                .orderId(orderId)
-                .carId(order.getCarId())
-                .status(status)
-                .build();
-    }
+    CarStatusDto toCarStatusDto(Long orderId, Long carId, Status status);
 
-    public OrderDto grpcOrderDtoToOrderDto(CommonDto.OrderDto orderDto) {
-        return OrderDto.builder()
-                .carId(orderDto.getCarId())
-                .orderDescription(orderDto.getOrderDescription())
-                .build();
-    }
+    OrderDto grpcOrderDtoToOrderDto(CommonDto.OrderDto orderDto);
 
-    public CommonDto.OrderResultDto orderResultDtoToGrpcOrderResultDto(OrderResultDto orderResultDto) {
-        return CommonDto.OrderResultDto.newBuilder()
-                .setCarId(orderResultDto.getCarId())
-                .setEventStatus(orderResultDto.getEventStatus().toString())
-                .build();
-    }
+    CommonDto.OrderResultDto toGrpcOrderResultDto(Long carId, EventStatus eventStatus);
 }

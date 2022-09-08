@@ -3,8 +3,6 @@ package com.zuzex.carshowroom.configuration;
 import com.zuzex.common.configuration.BaseKafkaConfiguration;
 import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.dto.CarStatusResultDto;
-import com.zuzex.common.dto.OrderDto;
-import com.zuzex.common.dto.OrderResultDto;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -24,11 +22,6 @@ public class KafkaConfiguration extends BaseKafkaConfiguration {
     private String autoOffsetReset;
 
     @Bean
-    public KafkaTemplate<String, OrderDto> orderKafkaTemplate(ProducerFactory<String, OrderDto> producerFactory) {
-        return new KafkaTemplate<>(producerFactory);
-    }
-
-    @Bean
     public KafkaTemplate<String, CarStatusResultDto> carStatusResultKafkaTemplate(ProducerFactory<String, CarStatusResultDto> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
@@ -43,24 +36,8 @@ public class KafkaConfiguration extends BaseKafkaConfiguration {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderResultDto> orderResultKafkaListenerContainerFactory(
-            ConsumerFactory<String, OrderResultDto> consumerFactory) {
-        return kafkaListenerContainerFactory(consumerFactory);
-    }
-
-    @Bean
     public ConsumerFactory<String, CarStatusDto> carStatusConsumerFactory() {
         return consumerFactory(bootstrapServer, consumerGroupId, autoOffsetReset, CarStatusDto.class);
-    }
-
-    @Bean
-    public ConsumerFactory<String, OrderResultDto> orderResultConsumerFactory() {
-        return consumerFactory(bootstrapServer, consumerGroupId, autoOffsetReset, OrderResultDto.class);
-    }
-
-    @Bean
-    public ProducerFactory<String, OrderDto> orderProducerFactory() {
-        return producerFactory(bootstrapServer);
     }
 
     @Bean

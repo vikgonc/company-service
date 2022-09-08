@@ -3,8 +3,6 @@ package com.zuzex.factory.configuration;
 import com.zuzex.common.configuration.BaseKafkaConfiguration;
 import com.zuzex.common.dto.CarStatusDto;
 import com.zuzex.common.dto.CarStatusResultDto;
-import com.zuzex.common.dto.OrderDto;
-import com.zuzex.common.dto.OrderResultDto;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -29,28 +27,9 @@ public class KafkaConfiguration extends BaseKafkaConfiguration {
     }
 
     @Bean
-    public KafkaTemplate<String, OrderResultDto> orderResultKafkaTemplate(ProducerFactory<String, OrderResultDto> producerFactory) {
-        return new KafkaTemplate<>(producerFactory);
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderDto> orderKafkaListenerContainerFactory(
-            ConsumerFactory<String, OrderDto> consumerFactory, KafkaTemplate<String, OrderResultDto> kafkaTemplate) {
-        ConcurrentKafkaListenerContainerFactory<String, OrderDto> factory = kafkaListenerContainerFactory(consumerFactory);
-        factory.setReplyTemplate(kafkaTemplate);
-
-        return factory;
-    }
-
-    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, CarStatusResultDto> carStatusResultKafkaListenerContainerFactory(
             ConsumerFactory<String, CarStatusResultDto> consumerFactory) {
         return kafkaListenerContainerFactory(consumerFactory);
-    }
-
-    @Bean
-    public ConsumerFactory<String, OrderDto> orderConsumerFactory() {
-        return consumerFactory(bootstrapServer, consumerGroupId, autoOffsetReset, OrderDto.class);
     }
 
     @Bean
@@ -60,11 +39,6 @@ public class KafkaConfiguration extends BaseKafkaConfiguration {
 
     @Bean
     public ProducerFactory<String, CarStatusDto> carStatusProducerFactory() {
-        return producerFactory(bootstrapServer);
-    }
-
-    @Bean
-    public ProducerFactory<String, OrderResultDto> orderResultProducerFactory() {
         return producerFactory(bootstrapServer);
     }
 }

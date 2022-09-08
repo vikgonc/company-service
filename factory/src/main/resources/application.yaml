@@ -1,5 +1,6 @@
 server:
   port: 8082
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5400/db
@@ -8,11 +9,13 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+
 kafka:
   bootstrap-server: localhost:9092
   consumer-group-id: order-group
   auto-offset-reset: earliest
-  order-topic: orders
-  order-result-topic: orders-result
   car-status-topic: car-status
   car-status-result-topic: car-status-result
+
+grpc:
+  port: 8888

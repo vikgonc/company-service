@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package com.zuzex.common.grpc.dto;
+
+message OrderDto {
+  int64 carId = 1;
+  string orderDescription = 2;
+}
+
+message OrderResultDto {
+  int64 carId = 1;
+  string eventStatus = 2;
+}

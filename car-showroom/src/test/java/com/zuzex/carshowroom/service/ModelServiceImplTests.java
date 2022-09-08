@@ -26,6 +26,9 @@ public class ModelServiceImplTests {
     @Mock
     private ModelRepository modelRepository;
 
+    @Mock
+    private ModelMapper modelMapper;
+
     private ModelService modelService;
     private final Model response = Model.builder()
             .id(1L)
@@ -37,7 +40,7 @@ public class ModelServiceImplTests {
     @BeforeAll
     void init() {
         MockitoAnnotations.openMocks(this);
-        modelService = new ModelServiceImpl(modelRepository, new ModelMapper());
+        modelService = new ModelServiceImpl(modelRepository, modelMapper);
     }
 
     @Test
@@ -86,6 +89,8 @@ public class ModelServiceImplTests {
     public void createNewModelTest() {
         when(modelRepository.save(any(Model.class)))
                 .thenReturn(Mono.just(response));
+        when(modelMapper.modelDtoToModel(any(ModelDto.class)))
+                .thenReturn(new Model());
 
         StepVerifier
                 .create(modelService.createNewModel(new ModelDto()))

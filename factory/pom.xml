@@ -9,7 +9,6 @@
     </parent>
 
     <artifactId>factory</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>factory</name>
 
     <dependencies>
@@ -32,9 +31,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.zuzex</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
@@ -50,6 +49,7 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <mainClass>com.zuzex.factory.FactoryApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

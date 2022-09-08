@@ -9,13 +9,7 @@
     </parent>
 
     <artifactId>common</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>common</name>
-
-    <properties>
-        <grpc-plugin.version>3.11.4</grpc-plugin.version>
-        <protoc-java.version>1.43.1</protoc-java.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -52,7 +46,7 @@
             <plugin>
                 <groupId>com.github.os72</groupId>
                 <artifactId>protoc-jar-maven-plugin</artifactId>
-                <version>${grpc-plugin.version}</version>
+                <version>${protoc-plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -67,18 +61,18 @@
                                 <outputTarget>
                                     <type>grpc-java</type>
                                     <addSources>none</addSources>
-                                    <outputDirectory>${basedir}/src/main/java</outputDirectory>
+                                    <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
                                     <pluginArtifact>io.grpc:protoc-gen-grpc-java:${protoc-java.version}</pluginArtifact>
                                 </outputTarget>
                                 <outputTarget>
                                     <type>java</type>
                                     <addSources>none</addSources>
-                                    <outputDirectory>${basedir}/src/main/java</outputDirectory>
+                                    <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
                                     <pluginArtifact>io.grpc:protoc-gen-grpc-java:${protoc-java.version}</pluginArtifact>
                                 </outputTarget>
                             </outputTargets>
                             <inputDirectories>
-                                <include>${basedir}/src/main/resources/proto</include>
+                                <include>${project.basedir}/src/main/resources/proto</include>
                             </inputDirectories>
                         </configuration>
                     </execution>

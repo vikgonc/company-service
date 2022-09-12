@@ -10,6 +10,7 @@
 
     <artifactId>car-showroom</artifactId>
     <name>car-showroom</name>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

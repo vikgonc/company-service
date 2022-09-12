@@ -13,12 +13,13 @@
     <artifactId>company-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>company-service</name>
-
     <packaging>pom</packaging>
+
     <modules>
         <module>common</module>
         <module>car-showroom</module>
         <module>factory</module>
+        <module>car-factory</module>
     </modules>
 
     <properties>

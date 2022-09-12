@@ -1,4 +1,4 @@
-package com.zuzex.factory.service.Impl;
+package com.zuzex.factory.service.impl;
 
 import com.zuzex.common.aop.TimeTrackable;
 import com.zuzex.common.dto.CarStatusDto;

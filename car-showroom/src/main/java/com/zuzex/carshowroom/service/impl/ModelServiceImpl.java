@@ -1,4 +1,4 @@
-package com.zuzex.carshowroom.service.Impl;
+package com.zuzex.carshowroom.service.impl;
 
 import com.zuzex.carshowroom.mapper.ModelMapper;
 import com.zuzex.carshowroom.model.Model;

@@ -18,7 +18,6 @@
     <modules>
         <module>common</module>
         <module>car-showroom</module>
-        <module>factory</module>
         <module>car-factory</module>
     </modules>
 

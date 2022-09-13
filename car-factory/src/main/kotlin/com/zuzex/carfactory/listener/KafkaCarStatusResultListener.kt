@@ -13,20 +13,17 @@ private val log = KotlinLogging.logger {}
 @Component
 @KafkaListener(
     topics = ["\${kafka.car-status-result-topic}"],
-    groupId = "\${kafka.consumer-group-id}"
+    containerFactory = "carStatusResultKafkaListenerContainerFactory"
 )
 class KafkaCarStatusResultListener(private val orderService: OrderService) {
 
     @KafkaHandler
     fun handleCarStatusResult(carStatusResultDto: CarStatusResultDto) {
         log.info("Result of save car status: $carStatusResultDto")
-            .also {
-                if (carStatusResultDto.eventStatus == EventStatus.SUCCESS) {
-                    log.info("Transaction success")
-                } else {
-                    orderService.revertOrderStatusById(carStatusResultDto.orderId)
-                    log.info("Order status reverted")
-                }
-            }
+        if (carStatusResultDto.eventStatus == EventStatus.SUCCESS)
+            log.info("Transaction success")
+        else
+            orderService.revertOrderStatusById(carStatusResultDto.orderId)
+                .also { log.info("Order status reverted: $it") }
     }
 }

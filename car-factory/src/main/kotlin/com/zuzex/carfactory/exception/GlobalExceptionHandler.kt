@@ -14,8 +14,7 @@ private val log = KotlinLogging.logger {}
 class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException::class)
-    fun handleNotFoundException(ex: NotFoundException): ResponseEntity<ErrorMessageDto> {
-        log.error(ex.message)
-        return ResponseEntity(ErrorMessageDto(ex.message), HttpStatus.NOT_FOUND)
-    }
+    fun handleNotFoundException(ex: NotFoundException) =
+        ResponseEntity(ErrorMessageDto(ex.message), HttpStatus.NOT_FOUND)
+            .also { log.error(ex.message) }
 }

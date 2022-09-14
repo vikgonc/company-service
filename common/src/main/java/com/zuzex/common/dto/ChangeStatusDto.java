@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChangeStatusDto {
-
     long orderId;
     Status currentOrderStatus;
     Status newOrderStatus;

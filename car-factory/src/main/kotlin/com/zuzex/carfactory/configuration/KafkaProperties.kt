@@ -6,7 +6,6 @@ import org.springframework.boot.context.properties.ConstructorBinding
 @ConstructorBinding
 @ConfigurationProperties(prefix = "kafka")
 data class KafkaProperties(
-
     val bootstrapServer: String,
     val consumerGroupId: String,
     val autoOffsetReset: String

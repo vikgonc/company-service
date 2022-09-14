@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CarStatusDto {
-
     private long orderId;
     private long carId;
     private Status status;

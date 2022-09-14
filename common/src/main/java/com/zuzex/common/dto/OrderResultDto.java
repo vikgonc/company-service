@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderResultDto {
-
     private long carId;
     private EventStatus eventStatus;
 }

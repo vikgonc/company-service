@@ -3,7 +3,7 @@ package com.zuzex.carshowroom.service;
 import com.zuzex.carshowroom.mapper.ModelMapper;
 import com.zuzex.carshowroom.model.Model;
 import com.zuzex.carshowroom.repository.ModelRepository;
-import com.zuzex.carshowroom.service.Impl.ModelServiceImpl;
+import com.zuzex.carshowroom.service.impl.ModelServiceImpl;
 import com.zuzex.common.dto.ModelDto;
 import com.zuzex.common.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeAll;

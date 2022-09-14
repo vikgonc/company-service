@@ -1,7 +1,6 @@
 package com.zuzex.common.model;
 
 public enum Status {
-
     PENDING,
     ORDER_CREATED,
     CAR_ASSEMBLED,

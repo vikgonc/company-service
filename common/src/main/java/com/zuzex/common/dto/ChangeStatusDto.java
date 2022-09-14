@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CarStatusDto {
-    private long orderId;
-    private long carId;
-    private Status status;
+public class ChangeStatusDto {
+    long orderId;
+    Status currentOrderStatus;
+    Status newOrderStatus;
+    Status newCarStatus;
 }

@@ -10,6 +10,7 @@
 
     <artifactId>car-showroom</artifactId>
     <name>car-showroom</name>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -36,6 +37,11 @@
             <artifactId>r2dbc-postgresql</artifactId>
             <version>${r2dbc-postgresql.version}</version>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
